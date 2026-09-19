@@ -4,6 +4,8 @@
 
 Gamit Check is a complete personal inventory web application for people who want to remember what they own, where they keep it, and its condition. React provides the interface, Express provides the API, and PostgreSQL stores item records and optional photos. The application includes persistent CRUD, server-side inventory queries, accessible error recovery, automated multi-browser tests, and a container-ready production build.
 
+**Repository:** [github.com/kian21992/Gamit-Check](https://github.com/kian21992/Gamit-Check)
+
 ## 2. Setup and installation
 
 ### Prerequisites
@@ -77,14 +79,20 @@ npm run dev
 
 Open **http://localhost:5173**. A working app displays **API connected**. A new database shows zero-valued cards and a **No items yet** panel. Press **Ctrl+C** to stop both processes.
 
-Build and preview the production version:
+Build the production version:
 
 ```sh
 npm run build
-npm run preview
 ```
 
-The build creates `dist/`. The preview normally uses **http://localhost:4173**, but the printed address is the source of truth.
+The build creates `dist/`. With PostgreSQL still running, start the production server in PowerShell:
+
+```powershell
+$env:NODE_ENV="production"
+npm start
+```
+
+Open **http://localhost:3000**. Express serves the built interface and API from the same address.
 
 ### Run the automated tests
 
@@ -94,7 +102,7 @@ Keep `npm run db:local` running, then run:
 npm test
 ```
 
-This runs validation unit tests, API integration tests, accessibility checks, and Chromium, Firefox, and WebKit browser tests. Temporary test records are identified by their returned IDs and removed afterward. Use `npm run test:unit`, `npm run test:api`, or `npm run test:e2e` to run one layer.
+This runs 18 validation, API, photo, accessibility, and Chromium/Firefox/WebKit browser tests. Temporary test records are identified by their returned IDs and removed afterward. Use `npm run test:unit`, `npm run test:api`, or `npm run test:e2e` to run one layer.
 
 ## 4. Features and usage
 
@@ -114,7 +122,7 @@ This runs validation unit tests, API integration tests, accessibility checks, an
 | Dashboard       | `/#/`               | Live item, category, and recent-item counts      |
 | My Items        | `/#/items`          | Saved records with search and category filtering |
 | Add Item        | `/#/add`            | Validated form that creates a PostgreSQL record  |
-| Navigation flow | `/#/flow`           | Planned five-screen flow diagram                 |
+| Navigation flow | `/#/flow`           | Implemented five-screen flow diagram             |
 | Item Details    | `/#/items/:id`      | Displays one saved item                          |
 | Edit Item       | `/#/items/:id/edit` | Updates an existing PostgreSQL record            |
 
@@ -201,7 +209,7 @@ The images below are embedded from `docs/previews/`. In VS Code, open the render
 
 <img src="./previews/navigation-flow-desktop.png" alt="Gamit Check navigation flow on desktop" width="100%">
 
-See the [complete screenshot gallery](previews/README.md) for mobile layouts and other screens. The populated Item Details, Edit Item, and Delete confirmation screenshots are historical design references and do not represent current records.
+See the [complete screenshot gallery](previews/README.md) for current desktop and mobile layouts of every major screen.
 
 ## 7. Known issues and next steps
 

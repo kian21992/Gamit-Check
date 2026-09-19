@@ -4,6 +4,8 @@
 
 Gamit Check is a complete personal inventory web application for people who want to remember what they own, where they keep it, and its condition. React provides the interface, Express provides the API, and PostgreSQL stores item records and optional photos. The application includes persistent CRUD, server-side inventory queries, accessible error recovery, automated multi-browser tests, and a container-ready production build.
 
+**Repository:** [github.com/kian21992/Gamit-Check](https://github.com/kian21992/Gamit-Check)
+
 ## 2. Setup and installation
 
 ### Prerequisites
@@ -81,14 +83,20 @@ npm run dev
 
 Open **http://localhost:5173**. A working app displays **API connected**. A new database shows zero-valued cards and a **No items yet** panel. Press **Ctrl+C** to stop both processes.
 
-To build and check the production version locally:
+To build the production version:
 
 ```sh
 npm run build
-npm run preview
 ```
 
-The build creates `dist/`. The preview normally opens at **http://localhost:4173**; use the address Vite prints. This is a local preview, not a public deployment.
+The build creates `dist/`. With PostgreSQL still running, start the production server in PowerShell:
+
+```powershell
+$env:NODE_ENV="production"
+npm start
+```
+
+Open **http://localhost:3000**. Express serves the built React application and API from the same address.
 
 ### Run the automated tests
 
@@ -98,7 +106,7 @@ Keep `npm run db:local` running, close any application data you do not want to e
 npm test
 ```
 
-The test command runs validation unit tests, API integration tests, accessibility checks, and Chromium, Firefox, and WebKit browser tests. Tests create uniquely named records and remove only those records afterward. Individual commands are `npm run test:unit`, `npm run test:api`, and `npm run test:e2e`.
+The test command runs 18 validation, API, photo, accessibility, and Chromium/Firefox/WebKit browser tests. Tests create uniquely named records and remove only those records afterward. Individual commands are `npm run test:unit`, `npm run test:api`, and `npm run test:e2e`.
 
 ## 4. Features and usage
 
@@ -117,7 +125,7 @@ The test command runs validation unit tests, API integration tests, accessibilit
 | Dashboard       | `/#/`                              | Live item, category, and recent-item counts      |
 | My Items        | `/#/items`                         | Saved records with search and category filtering |
 | Add Item        | `/#/add`                           | Validated form that creates a PostgreSQL record  |
-| Navigation flow | `/#/flow`                          | Diagram of the intended five-screen flow         |
+| Navigation flow | `/#/flow`                          | Diagram of the implemented five-screen flow      |
 | Item Details    | `/#/items/:id`                     | Displays one saved item                          |
 | Edit Item       | `/#/items/:id/edit`                | Updates an existing PostgreSQL record            |
 
@@ -176,7 +184,7 @@ REPORT.md           Weekly Increment Report
 
 ## 6. Screenshots
 
-These screenshots show the running app after sample items were removed.
+These screenshots show the current application running against the local API and PostgreSQL database.
 
 **Dashboard — desktop**
 
@@ -186,7 +194,7 @@ These screenshots show the running app after sample items were removed.
 
 ![My Items with search and category controls and no inventory records](docs/previews/my-items-desktop.png)
 
-See the [screenshot gallery](docs/previews/README.md) for mobile layouts and other screens. Earlier populated Item Details, Edit Item, and Delete confirmation images are labeled as historical design references, not current inventory records.
+See the [screenshot gallery](docs/previews/README.md) for current desktop and mobile layouts of every major screen.
 
 ## 7. Known issues and next steps
 
@@ -199,6 +207,6 @@ See the [screenshot gallery](docs/previews/README.md) for mobile layouts and oth
 
 The Express production server serves both the built React interface and `/api`. `Dockerfile` builds the application, while `compose.yaml` runs it with PostgreSQL. Follow [DEPLOYMENT.md](DEPLOYMENT.md) for local containers, hosted environment variables, health checks, and release verification.
 
-See the [wireframe reference](WIREFRAME.md) for the planned flow and the [Weekly Increment Report](REPORT.md) for completed work and remaining tasks.
+See the [design and navigation reference](WIREFRAME.md) and the [Weekly Increment Report](REPORT.md) for completed work and remaining release tasks.
 
 A complete copy of this guide is also available in [docs/README.md](docs/README.md) for workspace submission.

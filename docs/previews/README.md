@@ -1,8 +1,8 @@
-# Screen reference
+# Gamit Check screenshot gallery
 
-Full-page screenshots of the Gamit Check wireframe, captured in Chrome at 1440 px desktop and 390 px mobile widths.
+Full-page screenshots of the functional Gamit Check application, captured in Chromium at 1440 px desktop and 390 px mobile widths.
 
-Dashboard, My Items, Add Item, and Navigation flow reflect the current empty inventory. The Item Details, Edit Item, and Delete confirmation screenshots are retained as earlier design references; they do not represent items in the current app.
+Dashboard and My Items show a new empty inventory. Item Details, Edit Item, and Delete confirmation use a temporary screenshot record that was removed immediately after capture.
 
 | Screen              | Desktop                                    | Mobile                               |
 | ------------------- | ------------------------------------------ | ------------------------------------ |
@@ -14,6 +14,6 @@ Dashboard, My Items, Add Item, and Navigation flow reflect the current empty inv
 | Navigation flow     | [Desktop](navigation-flow-desktop.png)     | [Mobile](navigation-flow-mobile.png) |
 | Delete confirmation | [Desktop](delete-confirmation-desktop.png) | —                                    |
 
-The live wireframe is the source of truth for interactions. These screenshots provide a visual reference for later implementation and project presentations.
+The running application is the source of truth for interactions. These screenshots document the current responsive interface for project review and presentations.
 
 ![Gamit Check dashboard](dashboard-desktop.png)
