@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import multer from "multer";
 import path from "node:path";
 import { pool } from "./db.js";
 
@@ -13,6 +14,17 @@ const categories = [
   "Other",
 ];
 const conditions = ["New", "Good", "Fair", "Damaged"];
+const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+const imageUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 3 * 1024 * 1024, files: 1 },
+  fileFilter: (_request, file, callback) => {
+    if (allowedImageTypes.has(file.mimetype)) return callback(null, true);
+    const error = new Error("Choose a JPEG, PNG, or WebP image.");
+    error.code = "INVALID_IMAGE_TYPE";
+    callback(error);
+  },
+});
 const itemSorts = {
   created_desc: "created_at DESC, id DESC",
   created_asc: "created_at ASC, id ASC",
@@ -31,7 +43,27 @@ const itemColumns = `
   notes,
   created_at::date::text AS added,
   updated_at::text AS "updatedAt"
+  , image_data IS NOT NULL AS "hasImage"
+  , image_name AS "imageName"
 `;
+
+function hasValidImageSignature(file) {
+  const bytes = file.buffer;
+  if (file.mimetype === "image/jpeg")
+    return bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8;
+  if (file.mimetype === "image/png")
+    return (
+      bytes.length >= 8 &&
+      bytes.subarray(0, 8).equals(Buffer.from("89504e470d0a1a0a", "hex"))
+    );
+  if (file.mimetype === "image/webp")
+    return (
+      bytes.length >= 12 &&
+      bytes.subarray(0, 4).toString() === "RIFF" &&
+      bytes.subarray(8, 12).toString() === "WEBP"
+    );
+  return false;
+}
 
 function cleanOptional(value) {
   if (value === undefined || value === null) return null;
@@ -193,6 +225,90 @@ export function createApp({
     }
   });
 
+  app.get("/api/items/:id/image", async (request, response, next) => {
+    try {
+      const result = await pool.query(
+        `SELECT image_data, image_mime, image_name, updated_at
+         FROM items
+         WHERE id = $1`,
+        [request.params.id],
+      );
+      const item = result.rows[0];
+      if (!item) return response.status(404).json({ error: "Item not found." });
+      if (!item.image_data)
+        return response.status(404).json({ error: "Item photo not found." });
+      response.set({
+        "Content-Type": item.image_mime,
+        "Content-Length": String(item.image_data.length),
+        "Cache-Control": "private, max-age=31536000, immutable",
+        "Last-Modified": item.updated_at.toUTCString(),
+        "Content-Disposition": `inline; filename*=UTF-8''${encodeURIComponent(item.image_name || "item-photo")}`,
+      });
+      response.send(item.image_data);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.put(
+    "/api/items/:id/image",
+    imageUpload.single("image"),
+    async (request, response, next) => {
+      try {
+        if (!request.file)
+          return response.status(400).json({
+            error: "Choose an image to upload.",
+            fields: { image: "Choose a JPEG, PNG, or WebP image." },
+          });
+        if (!hasValidImageSignature(request.file))
+          return response.status(400).json({
+            error: "The selected file is not a valid image.",
+            fields: { image: "Choose a valid JPEG, PNG, or WebP image." },
+          });
+        const result = await pool.query(
+          `UPDATE items
+           SET image_data = $1,
+               image_mime = $2,
+               image_name = $3,
+               updated_at = NOW()
+           WHERE id = $4
+           RETURNING ${itemColumns}`,
+          [
+            request.file.buffer,
+            request.file.mimetype,
+            request.file.originalname.slice(0, 255),
+            request.params.id,
+          ],
+        );
+        if (!result.rows[0])
+          return response.status(404).json({ error: "Item not found." });
+        response.json({ item: result.rows[0] });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  app.delete("/api/items/:id/image", async (request, response, next) => {
+    try {
+      const result = await pool.query(
+        `UPDATE items
+         SET image_data = NULL,
+             image_mime = NULL,
+             image_name = NULL,
+             updated_at = NOW()
+         WHERE id = $1
+         RETURNING ${itemColumns}`,
+        [request.params.id],
+      );
+      if (!result.rows[0])
+        return response.status(404).json({ error: "Item not found." });
+      response.json({ item: result.rows[0] });
+    } catch (error) {
+      next(error);
+    }
+  });
+
   app.post("/api/items", async (request, response, next) => {
     const { item, errors } = validateItem(request.body ?? {});
     if (Object.keys(errors).length)
@@ -296,18 +412,30 @@ export function createApp({
   }
 
   app.use((error, _request, response, _next) => {
-    console.error(error);
     if (error.code === "22P02")
       return response.status(400).json({ error: "Invalid item identifier." });
+    if (error.code === "LIMIT_FILE_SIZE")
+      return response.status(413).json({
+        error: "The image is too large.",
+        fields: { image: "Choose an image smaller than 3 MB." },
+      });
+    if (error.code === "INVALID_IMAGE_TYPE")
+      return response.status(400).json({
+        error: error.message,
+        fields: { image: error.message },
+      });
     if (
       String(error.code || "").startsWith("08") ||
       ["57P01", "57P02", "57P03", "ECONNREFUSED", "ETIMEDOUT"].includes(
         error.code,
       )
-    )
+    ) {
+      console.error(error);
       return response
         .status(503)
         .json({ error: "The inventory database is temporarily unavailable." });
+    }
+    console.error(error);
     response
       .status(500)
       .json({ error: "The server could not complete the request. Try again." });

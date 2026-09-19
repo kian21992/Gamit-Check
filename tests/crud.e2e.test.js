@@ -123,16 +123,44 @@ test("desktop and mobile complete create, edit, refresh, and delete", async () =
   await page.getByLabel(/Category/).selectOption("Electronics");
   await page.getByLabel(/Condition/).selectOption("Good");
   await page.getByLabel(/Location/).fill("Automated shelf");
+  const firstPhoto = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+    "base64",
+  );
+  await page.getByLabel(/Item photo/).setInputFiles({
+    name: "browser-photo.png",
+    mimeType: "image/png",
+    buffer: firstPhoto,
+  });
+  await page.getByAltText("Selected item preview").waitFor();
   await page.getByRole("button", { name: "Add Item" }).click();
   await page.locator("h1").filter({ hasText: originalName }).waitFor();
   const id = page.url().match(/#\/items\/(\d+)$/)?.[1];
   assert.ok(id);
   createdIds.add(id);
+  await page.getByAltText(`Photo of ${originalName}`).waitFor();
+  assert.equal(
+    (
+      await fetch(
+        `http://127.0.0.1:${apiServer.address().port}/api/items/${id}/image`,
+      )
+    ).status,
+    200,
+  );
 
   await page.getByRole("link", { name: "Edit Item" }).click();
   await page.getByLabel(/Item name/).fill(updatedName);
   await page.getByLabel(/Condition/).selectOption("Fair");
   await page.getByLabel(/Location/).fill("Updated automated shelf");
+  const replacementPhoto = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl2n0YAAAAASUVORK5CYII=",
+    "base64",
+  );
+  await page.getByLabel(/Item photo/).setInputFiles({
+    name: "browser-replacement.png",
+    mimeType: "image/png",
+    buffer: replacementPhoto,
+  });
   await page.getByRole("button", { name: "Save Changes" }).click();
   await page.locator("h1").filter({ hasText: updatedName }).waitFor();
   await page.reload();
@@ -141,6 +169,20 @@ test("desktop and mobile complete create, edit, refresh, and delete", async () =
     await page.locator("body").innerText(),
     /Updated automated shelf/,
   );
+
+  await page.getByRole("link", { name: "Edit Item" }).click();
+  await page.getByRole("button", { name: "Remove current photo" }).click();
+  await page.getByRole("button", { name: "Save Changes" }).click();
+  await page.locator("h1").filter({ hasText: updatedName }).waitFor();
+  assert.equal(
+    (
+      await fetch(
+        `http://127.0.0.1:${apiServer.address().port}/api/items/${id}/image`,
+      )
+    ).status,
+    404,
+  );
+  await page.locator(".detail-art .product-art").waitFor();
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${appUrl}/#/items`);

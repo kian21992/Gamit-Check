@@ -2,6 +2,8 @@
 
 The production build runs the React application and Express API from one Node.js container. PostgreSQL remains a separate persistent service.
 
+Item photos are stored in PostgreSQL with a 3 MB limit per image. Include database storage growth when choosing the managed PostgreSQL plan and backup schedule.
+
 ## Local production container
 
 1. Install Docker Desktop.

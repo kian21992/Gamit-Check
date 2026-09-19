@@ -14,9 +14,16 @@ CREATE TABLE IF NOT EXISTS items (
   location VARCHAR(150),
   date_acquired DATE,
   notes TEXT CHECK (char_length(notes) <= 2000),
+  image_data BYTEA,
+  image_mime VARCHAR(50),
+  image_name VARCHAR(255),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE items ADD COLUMN IF NOT EXISTS image_data BYTEA;
+ALTER TABLE items ADD COLUMN IF NOT EXISTS image_mime VARCHAR(50);
+ALTER TABLE items ADD COLUMN IF NOT EXISTS image_name VARCHAR(255);
 
 CREATE INDEX IF NOT EXISTS items_category_idx ON items (category);
 CREATE INDEX IF NOT EXISTS items_created_at_idx ON items (created_at DESC);

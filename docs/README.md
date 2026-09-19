@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-Gamit Check is a complete personal inventory web application for people who want to remember what they own, where they keep it, and its condition. React provides the interface, Express provides the API, and PostgreSQL stores item records. All planned local iterations are complete: persistent CRUD, server-side inventory queries, accessible error recovery, automated multi-browser tests, and a container-ready production build.
+Gamit Check is a complete personal inventory web application for people who want to remember what they own, where they keep it, and its condition. React provides the interface, Express provides the API, and PostgreSQL stores item records and optional photos. The application includes persistent CRUD, server-side inventory queries, accessible error recovery, automated multi-browser tests, and a container-ready production build.
 
 ## 2. Setup and installation
 
@@ -103,9 +103,9 @@ This runs validation unit tests, API integration tests, accessibility checks, an
 1. Open the **Dashboard** to view the total item, category-in-use, and recently-added counts. A new database starts at zero.
 2. Open **My Items** to view, search, and filter saved records.
 3. Click **Add Item** or **Add your first item** to open the item form.
-4. Enter an item name, category, and condition. Brand, location, date acquired, and notes are optional.
-5. Press **Add Item**. The API validates the input, PostgreSQL saves it, and the application opens Item Details.
-6. Choose **Edit Item**, change the fields, and press **Save Changes** to update the record.
+4. Enter an item name, category, and condition. Brand, location, date acquired, notes, and an item photo are optional.
+5. Optionally choose a JPEG, PNG, or WebP photo up to 3 MB, then press **Add Item**. The API validates and stores the record and photo before opening Item Details.
+6. Choose **Edit Item** to update fields, replace or remove the photo, and press **Save Changes**.
 7. Choose **Delete Item**, then keep or permanently remove the item from the confirmation dialog.
 8. Open **View screen flow** in the footer to inspect the planned navigation. On mobile, use the menu button beside the app name.
 
@@ -120,14 +120,17 @@ This runs validation unit tests, API integration tests, accessibility checks, an
 
 Item IDs come from PostgreSQL. Add, edit, and delete actions update the database immediately. Search, category filtering, sorting, and pagination are processed by the API.
 
-| Method   | Endpoint         | Purpose                                                             |
-| -------- | ---------------- | ------------------------------------------------------------------- |
-| `GET`    | `/api/health`    | Check API and database connectivity                                 |
-| `GET`    | `/api/items`     | List items with search, category, sort, page, and page-size queries |
-| `GET`    | `/api/items/:id` | Retrieve one item                                                   |
-| `POST`   | `/api/items`     | Validate and create an item                                         |
-| `PUT`    | `/api/items/:id` | Validate and update an item                                         |
-| `DELETE` | `/api/items/:id` | Permanently delete an item                                          |
+| Method   | Endpoint               | Purpose                                                             |
+| -------- | ---------------------- | ------------------------------------------------------------------- |
+| `GET`    | `/api/health`          | Check API and database connectivity                                 |
+| `GET`    | `/api/items`           | List items with search, category, sort, page, and page-size queries |
+| `GET`    | `/api/items/:id`       | Retrieve one item                                                   |
+| `POST`   | `/api/items`           | Validate and create an item                                         |
+| `PUT`    | `/api/items/:id`       | Validate and update an item                                         |
+| `DELETE` | `/api/items/:id`       | Permanently delete an item                                          |
+| `GET`    | `/api/items/:id/image` | Retrieve an item's photo                                            |
+| `PUT`    | `/api/items/:id/image` | Upload or replace a JPEG, PNG, or WebP photo                        |
+| `DELETE` | `/api/items/:id/image` | Remove an item's photo                                              |
 
 ## 5. Project structure
 
@@ -204,6 +207,7 @@ See the [complete screenshot gallery](previews/README.md) for mobile layouts and
 
 - The database process must remain running while the application is used.
 - Automated axe checks and keyboard skip navigation pass, but a manual screen-reader review is still recommended before public release.
+- Photos are stored in PostgreSQL and limited to 3 MB each to keep database storage manageable.
 - The local repository and container configuration are ready. Publishing still requires the owner's Git host and deployment accounts; afterward, replace `<REPOSITORY_URL>` and add the public URL.
 
 ### Production deployment

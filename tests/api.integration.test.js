@@ -124,6 +124,122 @@ test("missing records return 404 for update and delete", async () => {
   assert.equal(deleteResponse.status, 404);
 });
 
+test("item photo endpoints upload, return, replace, and remove images", async () => {
+  const createResponse = await fetch(`${baseUrl}/api/items`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: "Automated photo item",
+      category: "Other",
+      condition: "Good",
+    }),
+  });
+  const { item } = await createResponse.json();
+  createdIds.add(item.id);
+
+  const firstImage = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+    "base64",
+  );
+  const uploadBody = new FormData();
+  uploadBody.append(
+    "image",
+    new Blob([firstImage], { type: "image/png" }),
+    "first.png",
+  );
+  const uploadResponse = await fetch(`${baseUrl}/api/items/${item.id}/image`, {
+    method: "PUT",
+    body: uploadBody,
+  });
+  const uploaded = await uploadResponse.json();
+  assert.equal(uploadResponse.status, 200);
+  assert.equal(uploaded.item.hasImage, true);
+  assert.equal(uploaded.item.imageName, "first.png");
+
+  const imageResponse = await fetch(`${baseUrl}/api/items/${item.id}/image`);
+  assert.equal(imageResponse.status, 200);
+  assert.equal(imageResponse.headers.get("content-type"), "image/png");
+  assert.deepEqual(Buffer.from(await imageResponse.arrayBuffer()), firstImage);
+
+  const replacementImage = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl2n0YAAAAASUVORK5CYII=",
+    "base64",
+  );
+  const replacementBody = new FormData();
+  replacementBody.append(
+    "image",
+    new Blob([replacementImage], { type: "image/png" }),
+    "replacement.png",
+  );
+  const replacementResponse = await fetch(
+    `${baseUrl}/api/items/${item.id}/image`,
+    { method: "PUT", body: replacementBody },
+  );
+  const replacement = await replacementResponse.json();
+  assert.equal(replacement.item.imageName, "replacement.png");
+
+  const removeResponse = await fetch(`${baseUrl}/api/items/${item.id}/image`, {
+    method: "DELETE",
+  });
+  const removed = await removeResponse.json();
+  assert.equal(removeResponse.status, 200);
+  assert.equal(removed.item.hasImage, false);
+  assert.equal(
+    (await fetch(`${baseUrl}/api/items/${item.id}/image`)).status,
+    404,
+  );
+});
+
+test("item photo endpoint rejects unsupported and fake images", async () => {
+  const createResponse = await fetch(`${baseUrl}/api/items`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: "Invalid photo item",
+      category: "Other",
+      condition: "Good",
+    }),
+  });
+  const { item } = await createResponse.json();
+  createdIds.add(item.id);
+
+  const unsupportedBody = new FormData();
+  unsupportedBody.append(
+    "image",
+    new Blob(["not an image"], { type: "text/plain" }),
+    "notes.txt",
+  );
+  const unsupportedResponse = await fetch(
+    `${baseUrl}/api/items/${item.id}/image`,
+    { method: "PUT", body: unsupportedBody },
+  );
+  assert.equal(unsupportedResponse.status, 400);
+
+  const fakeBody = new FormData();
+  fakeBody.append(
+    "image",
+    new Blob(["not really png"], { type: "image/png" }),
+    "fake.png",
+  );
+  const fakeResponse = await fetch(`${baseUrl}/api/items/${item.id}/image`, {
+    method: "PUT",
+    body: fakeBody,
+  });
+  assert.equal(fakeResponse.status, 400);
+
+  const largeBody = new FormData();
+  largeBody.append(
+    "image",
+    new Blob([Buffer.alloc(3 * 1024 * 1024 + 1)], { type: "image/png" }),
+    "large.png",
+  );
+  const largeResponse = await fetch(`${baseUrl}/api/items/${item.id}/image`, {
+    method: "PUT",
+    body: largeBody,
+  });
+  assert.equal(largeResponse.status, 413);
+});
+
 test("list endpoint paginates, filters, and sorts on the server", async () => {
   const stamp = Date.now();
   const names = ["Zulu", "Alpha", "Mike", "Bravo", "Echo"];

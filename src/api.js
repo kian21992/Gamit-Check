@@ -12,6 +12,7 @@ const apiBaseUrl = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
 function normalizeItem(item) {
   const numericId = Number.parseInt(String(item.id), 10);
+  const hasImage = Boolean(item.hasImage);
   return {
     ...item,
     id: String(item.id),
@@ -19,6 +20,11 @@ function normalizeItem(item) {
     location: item.location || "",
     notes: item.notes || "",
     acquired: item.acquired || "",
+    hasImage,
+    imageName: item.imageName || "",
+    imageUrl: hasImage
+      ? `${apiBaseUrl}/api/items/${item.id}/image?v=${encodeURIComponent(item.updatedAt || "")}`
+      : "",
     art: item.art || categoryArt[item.category] || "charger",
     color:
       item.color ||
@@ -29,10 +35,11 @@ function normalizeItem(item) {
 async function request(path, options = {}) {
   let response;
   try {
+    const isFormData = options.body instanceof FormData;
     response = await fetch(`${apiBaseUrl}${path}`, {
       ...options,
       headers: {
-        "Content-Type": "application/json",
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
         ...options.headers,
       },
     });
@@ -99,4 +106,19 @@ export async function updateItem(id, item) {
 
 export async function deleteItem(id) {
   await request(`/api/items/${id}`, { method: "DELETE" });
+}
+
+export async function uploadItemImage(id, file) {
+  const body = new FormData();
+  body.append("image", file);
+  const data = await request(`/api/items/${id}/image`, {
+    method: "PUT",
+    body,
+  });
+  return normalizeItem(data.item);
+}
+
+export async function removeItemImage(id) {
+  const data = await request(`/api/items/${id}/image`, { method: "DELETE" });
+  return normalizeItem(data.item);
 }

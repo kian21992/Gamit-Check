@@ -633,6 +633,15 @@ main:focus {
   height: 95%;
   max-width: 250px;
 }
+.item-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.item-art .item-photo {
+  border-radius: inherit;
+}
 .item-card:hover .item-art .product-art {
   transform: translateY(-3px) rotate(-2deg);
 }
@@ -1379,6 +1388,54 @@ tbody tr:hover {
   background: #edf1e7;
   margin: 5px 0 23px;
 }
+.photo-control {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.photo-preview {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 86px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 1px dashed #b8c3b1;
+  border-radius: 7px;
+  background: #f7f9f5;
+  color: #667085;
+}
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-actions {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+}
+.photo-actions input[type="file"] {
+  width: 100%;
+  padding: 8px;
+}
+.photo-actions input[type="file"]::file-selector-button {
+  margin-right: 10px;
+  padding: 7px 10px;
+  border: 1px solid #d0d5dd;
+  border-radius: 5px;
+  background: #fff;
+  color: #344054;
+  cursor: pointer;
+  font-weight: 600;
+}
+.photo-remove {
+  padding: 2px 0;
+  font-size: 11px;
+}
 .field-help {
   font-size: 11px;
   color: #a7b199;
@@ -1487,6 +1544,11 @@ tbody tr:hover {
   width: 88%;
   height: 85%;
   max-height: 330px;
+}
+.detail-art .item-photo,
+.form-preview-art .item-photo,
+.table-art .item-photo {
+  border-radius: inherit;
 }
 .detail-art-label {
   position: absolute;
@@ -3579,4 +3641,19 @@ body {
 
 .help-card strong {
   color: #52623f;
+}
+
+@media (max-width: 450px) {
+  .photo-control {
+    flex-direction: column;
+  }
+
+  .photo-preview {
+    width: 100%;
+    height: 170px;
+  }
+
+  .photo-actions {
+    width: 100%;
+  }
 }

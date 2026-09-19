@@ -20,16 +20,18 @@ Updated: September 20, 2026
 - Completed Iteration 4 with validated update and delete API endpoints, a persistent Edit Item form, deletion confirmation and cancellation, React state updates, and navigation after removal.
 - Verified the full create, read, update, and delete workflow in desktop and mobile Chrome against PostgreSQL, including persistence after refresh and cleanup of only the temporary verification records.
 - Completed Iteration 5 with field-specific form errors, accessible invalid-field descriptions, clearer network/database messages, and a retry action for failed inventory loads.
-- Added a maintained `npm test` suite with validation unit tests, real PostgreSQL API integration tests, and browser CRUD and recovery tests. All 16 tests pass, and the dependency audit reports no vulnerabilities.
+- Added a maintained `npm test` suite with validation unit tests, real PostgreSQL API integration tests, and browser CRUD and recovery tests. All 18 tests pass and dependency versions are locked.
 - Completed Iteration 6 by moving search, category filtering, four sort modes, and pagination to validated API queries. Added WCAG axe checks, keyboard skip-navigation coverage, and Chromium, Firefox, and WebKit smoke tests; contrast issues discovered by axe were corrected.
 - Completed the local work for Iteration 7: Express serves the production React build, a multi-stage Dockerfile and PostgreSQL Compose stack are included, a health check and automatic migration are configured, and the deployment guide documents hosted environment variables and release checks.
 - Verified the production build directly on port 3100: the root page, JavaScript asset, database health endpoint, paginated inventory endpoint, and unknown-API 404 all responded correctly.
+- Added optional persistent item photos stored in PostgreSQL. Add and Edit Item support JPEG, PNG, and WebP previews, replacement, and removal with a 3 MB limit; cards, tables, and Item Details display the saved photo with vector artwork as the fallback.
+- Added API and browser coverage for photo upload bytes, retrieval headers, replacement, removal, invalid types, spoofed content, oversized files, refresh persistence, and responsive display.
 
 ## Why
 
 These changes establish the interface and the first functional data flow for a personal inventory application. A new user starts with an empty PostgreSQL table, can add an item, and can view the saved item in the inventory and details screens.
 
-The current functional scope is complete CRUD: Create, Read, Update, and Delete. Authentication remains intentionally excluded from the personal-use project scope.
+The current functional scope is complete CRUD with optional persistent item photos. Authentication remains intentionally excluded from the personal-use project scope.
 
 ## What broke or what I got stuck on
 
@@ -40,6 +42,7 @@ The current functional scope is complete CRUD: Create, Read, Update, and Delete.
 - Installing the parallel-process development package initially hit a locked dependency folder. A retry succeeded, and `npm run dev` now starts both the API and Vite.
 - The first recovery test conflicted with React Strict Mode's duplicate development request, and its mobile assertion targeted a status badge hidden on small screens. The test was corrected to simulate the outage until retry and assert the visible inventory result.
 - The first accessibility run found insufficient contrast in secondary navigation, footer, form-placeholder, and helper text. Those colors were darkened and the WCAG scan now passes. Docker is not installed on this computer, so the production container could not be executed locally; the equivalent production Node server path was verified instead.
+- npm's audit endpoint returned a registry-maintenance response during the final photo-feature check. The last successful audit before the photo dependency was added reported no vulnerabilities; rerun `npm audit` when the registry maintenance ends.
 
 ## What is left
 

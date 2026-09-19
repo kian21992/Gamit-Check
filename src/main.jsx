@@ -18,6 +18,7 @@ import {
   Headphones,
   Heart,
   Home,
+  ImagePlus,
   Info,
   LayoutDashboard,
   LayoutGrid,
@@ -40,7 +41,9 @@ import {
   createItem,
   deleteItem as deleteItemRequest,
   getItems,
+  removeItemImage,
   searchItems,
+  uploadItemImage,
   updateItem,
 } from "./api";
 import { categories, conditions, formatDate } from "./inventory";
@@ -196,6 +199,18 @@ function EmptyInventory() {
   );
 }
 
+function ItemArtwork({ item, decorative = true }) {
+  return item.imageUrl ? (
+    <img
+      className="item-photo"
+      src={item.imageUrl}
+      alt={decorative ? "" : `Photo of ${item.name}`}
+    />
+  ) : (
+    <ProductArt type={item.art} />
+  );
+}
+
 function ItemCard({ item, actions = false, onDelete }) {
   return (
     <article className="item-card">
@@ -204,7 +219,7 @@ function ItemCard({ item, actions = false, onDelete }) {
         href={`#/items/${item.id}`}
         aria-label={`View ${item.name}`}
       >
-        <ProductArt type={item.art} />
+        <ItemArtwork item={item} />
         <span className="art-open">
           <ArrowUpRight size={16} />
         </span>
@@ -593,7 +608,7 @@ function MyItems({ route, onDelete, items }) {
                         <td>
                           <a className="table-name" href={`#/items/${item.id}`}>
                             <span className={`table-art art-${item.color}`}>
-                              <ProductArt type={item.art} />
+                              <ItemArtwork item={item} />
                             </span>
                             <strong>{item.name}</strong>
                           </a>
@@ -710,6 +725,19 @@ function ItemForm({ item, showToast, onCreated, onUpdated }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState("");
+  const [removePhoto, setRemovePhoto] = useState(false);
+
+  useEffect(() => {
+    if (!photoFile) {
+      setPhotoPreview("");
+      return undefined;
+    }
+    const previewUrl = URL.createObjectURL(photoFile);
+    setPhotoPreview(previewUrl);
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [photoFile]);
 
   function fieldErrorProps(name) {
     return {
@@ -739,18 +767,36 @@ function ItemForm({ item, showToast, onCreated, onUpdated }) {
     setSubmitError("");
     setFieldErrors({});
     const values = Object.fromEntries(new FormData(event.currentTarget));
+    delete values.image;
     try {
+      let saved;
       if (isEdit) {
-        const updated = await updateItem(item.id, values);
-        onUpdated(updated);
-        showToast(`${updated.name} was updated.`);
-        navigate(`/items/${updated.id}`);
+        saved = await updateItem(item.id, values);
       } else {
-        const created = await createItem(values);
-        onCreated(created);
-        showToast(`${created.name} was added to your inventory.`);
-        navigate(`/items/${created.id}`);
+        saved = await createItem(values);
       }
+
+      try {
+        if (photoFile) saved = await uploadItemImage(saved.id, photoFile);
+        else if (isEdit && removePhoto) saved = await removeItemImage(saved.id);
+      } catch (photoError) {
+        if (isEdit) onUpdated(saved);
+        else onCreated(saved);
+        showToast(
+          `${saved.name} was saved, but the photo failed: ${photoError.message}`,
+        );
+        navigate(`/items/${saved.id}`);
+        return;
+      }
+
+      if (isEdit) onUpdated(saved);
+      else onCreated(saved);
+      showToast(
+        isEdit
+          ? `${saved.name} was updated.`
+          : `${saved.name} was added to your inventory.`,
+      );
+      navigate(`/items/${saved.id}`);
     } catch (error) {
       setSubmitError(error.message);
       setFieldErrors(error.fields || {});
@@ -897,6 +943,95 @@ function ItemForm({ item, showToast, onCreated, onUpdated }) {
               <FieldError name="acquired" />
             </div>
             <div className="form-divider" />
+            <div className="field photo-field">
+              <label htmlFor="image">
+                Item photo <span className="optional">Optional</span>
+              </label>
+              <div className="photo-control">
+                <div className="photo-preview">
+                  {photoPreview ? (
+                    <img src={photoPreview} alt="Selected item preview" />
+                  ) : item?.imageUrl && !removePhoto ? (
+                    <img
+                      src={item.imageUrl}
+                      alt={`Current photo of ${item.name}`}
+                    />
+                  ) : (
+                    <ImagePlus size={24} aria-hidden="true" />
+                  )}
+                </div>
+                <div className="photo-actions">
+                  <input
+                    id="image"
+                    name="image"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    aria-describedby="image-help image-error"
+                    aria-invalid={Boolean(fieldErrors.image)}
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      setFieldErrors((current) => {
+                        const next = { ...current };
+                        delete next.image;
+                        return next;
+                      });
+                      if (!file) {
+                        setPhotoFile(null);
+                        return;
+                      }
+                      if (
+                        !["image/jpeg", "image/png", "image/webp"].includes(
+                          file.type,
+                        )
+                      ) {
+                        setPhotoFile(null);
+                        setFieldErrors((current) => ({
+                          ...current,
+                          image: "Choose a JPEG, PNG, or WebP image.",
+                        }));
+                        event.target.value = "";
+                        return;
+                      }
+                      if (file.size > 3 * 1024 * 1024) {
+                        setPhotoFile(null);
+                        setFieldErrors((current) => ({
+                          ...current,
+                          image: "Choose an image smaller than 3 MB.",
+                        }));
+                        event.target.value = "";
+                        return;
+                      }
+                      setPhotoFile(file);
+                      setRemovePhoto(false);
+                    }}
+                  />
+                  <span className="field-help" id="image-help">
+                    JPEG, PNG, or WebP. Maximum 3 MB.
+                  </span>
+                  <FieldError name="image" />
+                  {isEdit && item.hasImage && (
+                    <button
+                      type="button"
+                      className="text-link photo-remove"
+                      onClick={() => {
+                        setPhotoFile(null);
+                        setRemovePhoto((current) => !current);
+                      }}
+                    >
+                      {removePhoto
+                        ? "Keep current photo"
+                        : "Remove current photo"}
+                    </button>
+                  )}
+                  {removePhoto && (
+                    <span className="field-help">
+                      The current photo will be removed when you save.
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="form-divider" />
             <div className="field">
               <label htmlFor="notes">
                 Notes <span className="optional">Optional</span>
@@ -944,7 +1079,7 @@ function ItemForm({ item, showToast, onCreated, onUpdated }) {
           {isEdit ? (
             <div className="form-preview">
               <div className={`form-preview-art art-${item.color}`}>
-                <ProductArt type={item.art} />
+                <ItemArtwork item={item} decorative={false} />
               </div>
               <div>
                 <span className="eyebrow">YOU’RE UPDATING</span>
@@ -1037,7 +1172,7 @@ function ItemDetails({ item, onDelete }) {
       <div className="detail-layout">
         <div className="detail-visual">
           <div className={`detail-art art-${item.color}`}>
-            <ProductArt type={item.art} />
+            <ItemArtwork item={item} decorative={false} />
             <span className="detail-art-label">
               <Icon name={item.category} size={14} />
               {item.category}
