@@ -46,5 +46,5 @@ The current functional scope is complete CRUD with optional persistent item phot
 
 ## What is left
 
-- Publish the prepared local repository to the owner's Git host and deploy the included container using the owner's hosting and managed-PostgreSQL accounts.
+- Deploy the published GitHub repository using the owner's hosting and managed-PostgreSQL accounts.
 - Replace documentation placeholders with the resulting repository and public application URLs, then perform a manual screen-reader review of the hosted release.

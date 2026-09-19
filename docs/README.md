@@ -23,11 +23,11 @@ The frontend uses React 19 and Vite 6. The backend uses Express 5 and the `pg` P
 1. Clone the repository and enter the project folder:
 
    ```sh
-   git clone <REPOSITORY_URL> gamit-check
+   git clone https://github.com/kian21992/Gamit-Check.git gamit-check
    cd gamit-check
    ```
 
-   Replace `<REPOSITORY_URL>` with the real clone URL. No Git remote is configured in the current workspace, so this placeholder must be replaced after the repository is published. If the project was supplied as a ZIP, extract it and open a terminal in the folder containing `package.json`.
+   Alternatively, download the project ZIP from GitHub, extract it, and open a terminal in the folder containing `package.json`.
 
 2. Install the locked dependencies:
 
@@ -208,7 +208,7 @@ See the [complete screenshot gallery](previews/README.md) for mobile layouts and
 - The database process must remain running while the application is used.
 - Automated axe checks and keyboard skip navigation pass, but a manual screen-reader review is still recommended before public release.
 - Photos are stored in PostgreSQL and limited to 3 MB each to keep database storage manageable.
-- The local repository and container configuration are ready. Publishing still requires the owner's Git host and deployment accounts; afterward, replace `<REPOSITORY_URL>` and add the public URL.
+- The repository is published at [github.com/kian21992/Gamit-Check](https://github.com/kian21992/Gamit-Check). A container-host account is still required to publish the application and add its public URL.
 
 ### Production deployment
 

@@ -45,4 +45,4 @@ npm audit
 
 Run `npm run db:local` in its own terminal. The automated tests remove only the records they create.
 
-After deployment, verify the public root page, `/api/health`, Add Item, Edit Item, and Delete Item. Then replace `<REPOSITORY_URL>` and any deployment placeholders in the README with the actual URLs.
+After deployment, verify the public root page, `/api/health`, Add Item, Edit Item, and Delete Item. Then add the public application URL to the README.

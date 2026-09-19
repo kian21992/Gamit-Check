@@ -25,11 +25,11 @@ The frontend uses React 19 and Vite 6. The backend uses Express 5 and the `pg` P
 1. Clone the project and enter its root folder:
 
    ```sh
-   git clone <REPOSITORY_URL> gamit-check
+   git clone https://github.com/kian21992/Gamit-Check.git gamit-check
    cd gamit-check
    ```
 
-   Replace `<REPOSITORY_URL>` with the actual project Git clone URL. **No Git remote is configured in the supplied workspace**, so this placeholder must be replaced before sharing clone instructions. Alternatively, extract a provided project ZIP and open a terminal in the folder containing `package.json`.
+   Alternatively, download the project ZIP from GitHub, extract it, and open a terminal in the folder containing `package.json`.
 
 2. Install the versions recorded in `package-lock.json`:
 
@@ -193,7 +193,7 @@ See the [screenshot gallery](docs/previews/README.md) for mobile layouts and oth
 - **The database must be running:** keep `npm run db:local` open, or configure an external PostgreSQL server.
 - **Automated accessibility has practical limits:** axe checks and keyboard skip navigation pass, but a manual screen-reader review is still recommended before a public release.
 - **Photos use database storage:** each image is limited to 3 MB to keep backups and hosted-database usage manageable.
-- **Repository and public URL pending:** the local repository and deployment configuration are ready, but publishing requires the owner's Git host and container-host accounts. Add the Git remote, deploy using [DEPLOYMENT.md](DEPLOYMENT.md), replace `<REPOSITORY_URL>`, and record the public URL.
+- **Public deployment URL pending:** the repository is published at [github.com/kian21992/Gamit-Check](https://github.com/kian21992/Gamit-Check). Deploy using [DEPLOYMENT.md](DEPLOYMENT.md), then record the public application URL.
 
 ## Production deployment
 
