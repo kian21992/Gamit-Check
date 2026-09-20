@@ -10,6 +10,12 @@ Gamit Check is a complete personal inventory web application for people who want
 
 This section turns the sections in the [project proposal](https://github.com/HAU-6APSI/student-6apsi-2203-kian21992/blob/main/content/final-project-planning/01-proposal.md) into routes and React component boundaries. The sketches use only boxes and labels. They describe structure and responsive behavior without choosing colors, fonts, or decorative details.
 
+The three images in this section are the submission-ready visual copies. Open an image, then save or copy it for submission:
+
+- [Screen map picture](wireframe-screen-map.png)
+- [Desktop and phone screen-sketch picture](wireframe-screen-sketches.png)
+- [React component-tree picture](wireframe-component-tree.png)
+
 ### Step A: Screen map
 
 The Dashboard is the first screen and the main home base. Dashboard, My Items, and Add Item remain available through the shared desktop navigation or phone menu. Every secondary screen has a route back to My Items or Dashboard.
@@ -42,9 +48,13 @@ flowchart TD
 
 The delete confirmation is a modal state rather than a separate URL. Item Details and Edit Item require an existing item ID. The remaining screens are directly reachable from the shared navigation.
 
+<img src="./wireframe-screen-map.png" alt="Gamit Check screen map showing navigation between Dashboard, My Items, Add Item, Item Details, Edit Item, delete confirmation, and navigation flow" width="100%">
+
 ### Step B: Screen sketches
 
 The shared desktop layout uses a navigation column, page header, main-content area, and footer. On a phone, the navigation collapses behind a menu button and all major content regions stack vertically.
+
+<img src="./wireframe-screen-sketches.png" alt="Box-and-label desktop and phone wireframes for every Gamit Check screen" width="100%">
 
 | Screen | Desktop layout | Phone layout | Navigates to |
 | --- | --- | --- | --- |
@@ -277,6 +287,8 @@ DESKTOP                              PHONE
 ### Step C: Component tree
 
 My Items is the busiest screen because it combines navigation, server query controls, repeated inventory records, pagination, deletion, and feedback states. The proposed tree is:
+
+<img src="./wireframe-component-tree.png" alt="Gamit Check React component tree and atomic-design breakdown" width="100%">
 
 ```text
 AppLayout
@@ -610,6 +622,10 @@ docs/
   design-system.html  Editable visual design-system source
   design-system.png   Submission-ready design-system image
   design-system.pdf   Print-ready design-system export
+  wireframes-visual.html  Editable wireframe visual source
+  wireframe-screen-map.png  Submission-ready screen map
+  wireframe-screen-sketches.png  Desktop and phone wireframes
+  wireframe-component-tree.png  React component breakdown
   previews/         Desktop and mobile screenshots
 project/
   README.md         Workspace documentation links
