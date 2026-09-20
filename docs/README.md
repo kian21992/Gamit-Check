@@ -372,7 +372,7 @@ The screen map becomes the hash routes and navigation links. Each labelled box i
 
 <img src="./design-system.png" alt="Gamit Check design system showing the colour palette, type scale, spacing, reusable components, responsive layouts, and accessibility checks" width="100%">
 
-[Download the design-system picture](design-system.png) | [Download the PDF](design-system.pdf)
+[Download the Word document](final-project-design-system.docx) | [Download the design-system picture](design-system.png) | [Download the PDF](design-system.pdf)
 
 ### Step A: Choose your styling approach
 
