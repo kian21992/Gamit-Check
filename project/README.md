@@ -8,4 +8,4 @@ The complete documentation is maintained in the project's root [README.md](../RE
 - [View the wireframe reference](../WIREFRAME.md)
 - [Read the weekly report](REPORT.md)
 
-Run installation and application commands from the parent folder containing `package.json`, not this `project/` documentation folder. The current application is an empty-inventory wireframe with no backend, database, or saved item changes.
+Run installation and application commands from the parent folder containing `package.json`, not this `project/` documentation folder. The current application has a React interface, Express API, PostgreSQL persistence, item-photo support, complete CRUD operations, server-side inventory queries, and automated tests.

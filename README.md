@@ -6,7 +6,35 @@ Gamit Check is a complete personal inventory web application for people who want
 
 **Repository:** [github.com/kian21992/Gamit-Check](https://github.com/kian21992/Gamit-Check)
 
-## 2. Setup and installation
+## 2. Planning and design visuals
+
+### Wireframes & Component Breakdown
+
+The wireframes map every route, show each screen at desktop and phone widths, and turn the busiest screen into a React component tree. The complete written breakdown is in the [project documentation](docs/README.md#2-wireframes--component-breakdown).
+
+#### Screen map
+
+<img src="docs/wireframe-screen-map.png" alt="Gamit Check screen map showing navigation between all application screens" width="100%">
+
+#### Desktop and phone screen sketches
+
+<img src="docs/wireframe-screen-sketches.png" alt="Box-and-label desktop and phone wireframes for every Gamit Check screen" width="100%">
+
+#### React component tree
+
+<img src="docs/wireframe-component-tree.png" alt="Gamit Check React component tree and atomic-design breakdown" width="100%">
+
+Direct downloads: [screen map](docs/wireframe-screen-map.png), [screen sketches](docs/wireframe-screen-sketches.png), and [component tree](docs/wireframe-component-tree.png).
+
+### Design System
+
+The design system defines the Plain CSS approach, five-colour token palette, three-level type scale, 8 px spacing rule, reusable components, responsive breakpoints, and accessibility checks. Read the [filled design-system section](docs/README.md#3-design-system) for the written values.
+
+<img src="docs/design-system.png" alt="Gamit Check visual design system showing colour swatches, typography, spacing, reusable components, responsive layouts, and accessibility checks" width="100%">
+
+Download the [design-system image](docs/design-system.png) or the [print-ready PDF](docs/design-system.pdf).
+
+## 3. Setup and installation
 
 ### Prerequisites
 
@@ -73,7 +101,7 @@ The first run initializes `.postgres-data/`, creates `gamit_check`, and applies 
 
 To use an external PostgreSQL server instead, change `DATABASE_URL`, create the database, and run `npm run db:migrate`. There is no seed command because the inventory starts empty.
 
-## 3. How to run it
+## 4. How to run it
 
 With `npm run db:local` still running in the first terminal, start the React frontend and Express API in a second terminal:
 
@@ -108,7 +136,7 @@ npm test
 
 The test command runs 18 validation, API, photo, accessibility, and Chromium/Firefox/WebKit browser tests. Tests create uniquely named records and remove only those records afterward. Individual commands are `npm run test:unit`, `npm run test:api`, and `npm run test:e2e`.
 
-## 4. Features and usage
+## 5. Features and usage
 
 ### Primary flow
 
@@ -143,7 +171,7 @@ The test command runs 18 validation, API, photo, accessibility, and Chromium/Fir
 | `PUT`    | `/api/items/:id/image` | Upload or replace a JPEG, PNG, or WebP photo                             |
 | `DELETE` | `/api/items/:id/image` | Remove an item's photo                                                   |
 
-## 5. Project structure
+## 6. Project structure
 
 ```text
 src/
@@ -182,7 +210,7 @@ REPORT.md           Weekly Increment Report
 
 `node_modules/` and `dist/` are generated locally and ignored by Git.
 
-## 6. Screenshots
+## 7. Screenshots
 
 These screenshots show the current application running against the local API and PostgreSQL database.
 
@@ -196,7 +224,7 @@ These screenshots show the current application running against the local API and
 
 See the [screenshot gallery](docs/previews/README.md) for current desktop and mobile layouts of every major screen.
 
-## 7. Known issues and next steps
+## 8. Known issues and next steps
 
 - **The database must be running:** keep `npm run db:local` open, or configure an external PostgreSQL server.
 - **Automated accessibility has practical limits:** axe checks and keyboard skip navigation pass, but a manual screen-reader review is still recommended before a public release.
