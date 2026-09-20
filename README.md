@@ -6,35 +6,7 @@ Gamit Check is a complete personal inventory web application for people who want
 
 **Repository:** [github.com/kian21992/Gamit-Check](https://github.com/kian21992/Gamit-Check)
 
-## 2. Planning and design visuals
-
-### Wireframes & Component Breakdown
-
-The wireframes map every route, show each screen at desktop and phone widths, and turn the busiest screen into a React component tree. The complete written breakdown is in the [project documentation](docs/README.md#2-wireframes--component-breakdown).
-
-#### Screen map
-
-<img src="docs/wireframe-screen-map.png" alt="Gamit Check screen map showing navigation between all application screens" width="100%">
-
-#### Desktop and phone screen sketches
-
-<img src="docs/wireframe-screen-sketches.png" alt="Box-and-label desktop and phone wireframes for every Gamit Check screen" width="100%">
-
-#### React component tree
-
-<img src="docs/wireframe-component-tree.png" alt="Gamit Check React component tree and atomic-design breakdown" width="100%">
-
-Direct downloads: [screen map](docs/wireframe-screen-map.png), [screen sketches](docs/wireframe-screen-sketches.png), and [component tree](docs/wireframe-component-tree.png).
-
-### Design System
-
-The design system defines the Plain CSS approach, five-colour token palette, three-level type scale, 8 px spacing rule, reusable components, responsive breakpoints, and accessibility checks. Read the [filled design-system section](docs/README.md#3-design-system) for the written values.
-
-<img src="docs/design-system.png" alt="Gamit Check visual design system showing colour swatches, typography, spacing, reusable components, responsive layouts, and accessibility checks" width="100%">
-
-Download the [design-system image](docs/design-system.png) or the [print-ready PDF](docs/design-system.pdf).
-
-## 3. Setup and installation
+## 2. Setup and installation
 
 ### Prerequisites
 
@@ -67,7 +39,7 @@ The frontend uses React 19 and Vite 6. The backend uses Express 5 and the `pg` P
    npm ci
    ```
 
-   Internet access is needed to download dependencies. Run the commands in this README from the project root, **not** the documentation-only `project/` subfolder.
+   Internet access is needed to download dependencies. Run the commands in this README from the project root.
 
 3. Install the browser engines used by the automated tests:
 
@@ -101,7 +73,7 @@ The first run initializes `.postgres-data/`, creates `gamit_check`, and applies 
 
 To use an external PostgreSQL server instead, change `DATABASE_URL`, create the database, and run `npm run db:migrate`. There is no seed command because the inventory starts empty.
 
-## 4. How to run it
+## 3. How to run it
 
 With `npm run db:local` still running in the first terminal, start the React frontend and Express API in a second terminal:
 
@@ -136,7 +108,7 @@ npm test
 
 The test command runs 18 validation, API, photo, accessibility, and Chromium/Firefox/WebKit browser tests. Tests create uniquely named records and remove only those records afterward. Individual commands are `npm run test:unit`, `npm run test:api`, and `npm run test:e2e`.
 
-## 5. Features and usage
+## 4. Features and usage
 
 ### Primary flow
 
@@ -171,7 +143,7 @@ The test command runs 18 validation, API, photo, accessibility, and Chromium/Fir
 | `PUT`    | `/api/items/:id/image` | Upload or replace a JPEG, PNG, or WebP photo                             |
 | `DELETE` | `/api/items/:id/image` | Remove an item's photo                                                   |
 
-## 6. Project structure
+## 5. Project structure
 
 ```text
 src/
@@ -195,36 +167,16 @@ tests/
 Dockerfile                 Production Node.js container
 compose.yaml               App and PostgreSQL container stack
 DEPLOYMENT.md              Production and container deployment guide
-docs/previews/      Desktop/mobile screenshots and screenshot index
-project/
-  README.md         Workspace link to this documentation
-  REPORT.md         Workspace copy of the weekly report
 index.html          Application entry page
 vite.config.js      Vite and React plugin configuration
 package.json        Dependencies and dev/build/preview commands
 package-lock.json   Locked versions for npm ci
 README.md           Setup, usage, and current status
-WIREFRAME.md        Design reference and intended navigation flow
-REPORT.md           Weekly Increment Report
 ```
 
 `node_modules/` and `dist/` are generated locally and ignored by Git.
 
-## 7. Screenshots
-
-These screenshots show the current application running against the local API and PostgreSQL database.
-
-**Dashboard — desktop**
-
-![Empty Dashboard with zero counts and an Add your first item link](docs/previews/dashboard-desktop.png)
-
-**My Items — desktop**
-
-![My Items with search and category controls and no inventory records](docs/previews/my-items-desktop.png)
-
-See the [screenshot gallery](docs/previews/README.md) for current desktop and mobile layouts of every major screen.
-
-## 8. Known issues and next steps
+## 6. Known issues and next steps
 
 - **The database must be running:** keep `npm run db:local` open, or configure an external PostgreSQL server.
 - **Automated accessibility has practical limits:** axe checks and keyboard skip navigation pass, but a manual screen-reader review is still recommended before a public release.
@@ -234,7 +186,3 @@ See the [screenshot gallery](docs/previews/README.md) for current desktop and mo
 ## Production deployment
 
 The Express production server serves both the built React interface and `/api`. `Dockerfile` builds the application, while `compose.yaml` runs it with PostgreSQL. Follow [DEPLOYMENT.md](DEPLOYMENT.md) for local containers, hosted environment variables, health checks, and release verification.
-
-See the [design and navigation reference](WIREFRAME.md) and the [Weekly Increment Report](REPORT.md) for completed work and remaining release tasks.
-
-A complete copy of this guide is also available in [docs/README.md](docs/README.md) for workspace submission.
