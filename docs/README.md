@@ -356,7 +356,98 @@ No screen is stranded. Cancel returns Add Item to My Items and Edit Item to Item
 
 The screen map becomes the hash routes and navigation links. Each labelled box is a component candidate, and the phone stacking notes map to the responsive rules in `src/styles.css`.
 
-## 3. Setup and installation
+## 3. Design System
+
+The visual below is the design reference for Gamit Check. It shows the actual palette, type sizes, spacing scale, component examples, breakpoints, and accessibility decisions on one sheet.
+
+<img src="./design-system.png" alt="Gamit Check visual design system showing colour swatches, typography, spacing, reusable components, responsive layouts, and accessibility checks" width="100%">
+
+Download the [print-ready PDF](design-system.pdf) or open the [editable HTML source](design-system.html). The image and PDF are suitable for submission where the design system must be handed in as a picture.
+
+### Step A: Styling approach
+
+**Approach: Plain CSS.** Tokens live as custom properties in the final `:root` theme block in `src/styles.css`. This keeps the current React and Vite stack small and lets every component reference the same values.
+
+```css
+:root {
+  --color-primary: #256b4a;
+  --color-accent: #b42318;
+  --color-bg: #f6f7f8;
+  --color-surface: #ffffff;
+  --color-text: #1f2937;
+}
+```
+
+### Step B: Colour tokens
+
+The core palette contains five colours. Contrast ratios use WCAG relative luminance and meet the 4.5:1 requirement for normal text.
+
+| Token | Role | Hex | Checked text pair | Contrast |
+| --- | --- | --- | --- | ---: |
+| `--color-primary` | Primary buttons, links, focus, and active states | `#256B4A` | White on primary | 6.40:1 |
+| `--color-accent` | Destructive confirmation action | `#B42318` | White on accent | 6.57:1 |
+| `--color-bg` | Application background | `#F6F7F8` | Text on background | 13.69:1 |
+| `--color-surface` | Cards, forms, dialogs, and navigation | `#FFFFFF` | Text on surface | 14.68:1 |
+| `--color-text` | Headings and body copy | `#1F2937` | Text on surface | 14.68:1 |
+
+### Step C: Type scale
+
+The interface uses the local system sans-serif stack, led by Inter when it is available. It does not depend on a remote font download.
+
+| Style | Token | Size | Weight | Used for |
+| --- | --- | ---: | ---: | --- |
+| Heading | `--font-size-heading` | 28 px | 700 | Screen and section titles |
+| Body | `--font-size-body` | 14 px | 400 | Paragraphs, lists, controls, and item content |
+| Small | `--font-size-small` | 12 px | 400 | Labels, captions, helper text, and footer |
+
+### Step D: Spacing rule
+
+The base unit is **8 px**. Related controls use one or two units, while page sections use four units.
+
+| Token | Value | Use |
+| --- | ---: | --- |
+| `--space-1` | 8 px | Tight space between related labels, icons, and controls |
+| `--space-2` | 16 px | Space inside groups and between related fields |
+| `--space-4` | 32 px | Standard separation between page sections |
+| `--page-padding` | 32 px desktop / 18 px phone | Distance from content to the screen edge |
+
+### Step E: Reusable components
+
+These components come directly from the wireframe component tree. The design-system image shows one consistent visual example of each.
+
+| Component | Level | Appears on | Main props |
+| --- | --- | --- | --- |
+| `Button` | Atom | Every action screen and dialog | `variant`, `disabled`, `onClick`, `children` |
+| `ConditionBadge` | Atom | Dashboard, My Items, Item Details | `condition` |
+| `FormField` | Molecule | Add Item, Edit Item, search/filter controls | `label`, `name`, `required`, `error`, `children` |
+| `ItemCard` | Molecule | Dashboard, My Items | `item`, `actions`, `onDelete` |
+| `PageHeading` | Molecule | Every route-level screen | `eyebrow`, `title`, `description`, `action` |
+| `Sidebar` / navigation | Organism | Every route-level screen | `active`, `open`, `close`, `itemCount` |
+| `Toast` | Molecule | Create, update, upload, and delete flows | `message`, `type`, `onDismiss` |
+| `DeleteDialog` | Organism | My Items, Item Details | `item`, `close`, `confirm` |
+| `ItemForm` | Organism | Add Item, Edit Item | `item`, `showToast`, `onCreated`, `onUpdated` |
+| `Footer` | Organism | Every route-level screen | `flowLink`, `children` |
+
+Button variants are primary, secondary, and destructive. Repeated `ItemCard` components receive an item object and use its PostgreSQL ID as the React list key. Add and Edit share `ItemForm` so labels, validation, photo controls, and action placement stay consistent.
+
+### Step F: Responsive plan
+
+- At **760 px and below**, the sidebar becomes a menu, multi-column cards and paired form fields become a single stack, tables use mobile item cards, and page-edge padding becomes 18 px.
+- At **761 px and above**, the navigation stays visible, cards can use multiple columns, and related form fields can sit side by side.
+- At **450 px and below**, controls and text receive an additional compact adjustment for narrow phones.
+- The layout has a 320 px minimum and is tested at 375 px without horizontal page scrolling.
+
+### Accessibility check
+
+- [x] Every core text-on-background pair passes 4.5:1 contrast.
+- [x] Layout and controls use semantic elements such as `<nav>`, `<main>`, `<button>`, and form controls.
+- [x] Meaningful item photos have alternative text; decorative artwork is hidden from assistive technology.
+- [x] Every form control has a visible matching label.
+- [x] Keyboard users can reach every action and see the focus indicator.
+
+Automated axe checks and desktop/mobile keyboard workflow tests cover the implemented interface. The design-system tokens are defined in `src/styles.css`, and the responsive plan matches its existing media queries.
+
+## 4. Setup and installation
 
 ### Prerequisites
 
@@ -419,7 +510,7 @@ npm run db:local
 
 The first run initializes `.postgres-data/`, creates the database, and applies the schema automatically. Keep that terminal open. To use an external PostgreSQL server instead, update `DATABASE_URL`, create the database, and run `npm run db:migrate`.
 
-## 4. How to run it
+## 5. How to run it
 
 With the local database running in the first terminal, start the React frontend and Express API in a second terminal:
 
@@ -454,7 +545,7 @@ npm test
 
 This runs 18 validation, API, photo, accessibility, and Chromium/Firefox/WebKit browser tests. Temporary test records are identified by their returned IDs and removed afterward. Use `npm run test:unit`, `npm run test:api`, or `npm run test:e2e` to run one layer.
 
-## 5. Features and usage
+## 6. Features and usage
 
 ### Primary flow
 
@@ -490,7 +581,7 @@ Item IDs come from PostgreSQL. Add, edit, and delete actions update the database
 | `PUT`    | `/api/items/:id/image` | Upload or replace a JPEG, PNG, or WebP photo                        |
 | `DELETE` | `/api/items/:id/image` | Remove an item's photo                                              |
 
-## 6. Project structure
+## 7. Project structure
 
 ```text
 src/
@@ -516,6 +607,9 @@ compose.yaml               App and PostgreSQL container stack
 DEPLOYMENT.md              Production and container deployment guide
 docs/
   README.md         This documentation copy
+  design-system.html  Editable visual design-system source
+  design-system.png   Submission-ready design-system image
+  design-system.pdf   Print-ready design-system export
   previews/         Desktop and mobile screenshots
 project/
   README.md         Workspace documentation links
@@ -531,7 +625,7 @@ REPORT.md           Weekly Increment Report
 
 `node_modules/` and `dist/` are generated locally and ignored by Git.
 
-## 7. Screenshots
+## 8. Screenshots
 
 The images below are embedded from `docs/previews/`. In VS Code, open the rendered Markdown preview with **Ctrl+Shift+V** (Windows/Linux) or **Cmd+Shift+V** (macOS) to see them instead of the Markdown source.
 
@@ -561,7 +655,7 @@ The images below are embedded from `docs/previews/`. In VS Code, open the render
 
 See the [complete screenshot gallery](previews/README.md) for current desktop and mobile layouts of every major screen.
 
-## 8. Known issues and next steps
+## 9. Known issues and next steps
 
 - The database process must remain running while the application is used.
 - Automated axe checks and keyboard skip navigation pass, but a manual screen-reader review is still recommended before public release.

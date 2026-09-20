@@ -3066,19 +3066,32 @@ tbody tr:hover {
 
 /* Practical application theme */
 :root {
-  --green: #256b4a;
+  --color-primary: #256b4a;
+  --color-accent: #b42318;
+  --color-bg: #f6f7f8;
+  --color-surface: #ffffff;
+  --color-text: #1f2937;
+  --font-size-heading: 28px;
+  --font-size-body: 14px;
+  --font-size-small: 12px;
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-4: 32px;
+  --page-padding: 32px;
+  --green: var(--color-primary);
   --deep-green: #1e563c;
-  --text: #1f2937;
+  --text: var(--color-text);
   --muted: #667085;
   --line: #e4e7ec;
   --sidebar: 224px;
   --radius: 8px;
+  font-size: var(--font-size-body);
   color: var(--text);
-  background: #f6f7f8;
+  background: var(--color-bg);
 }
 
 body {
-  background: #f6f7f8;
+  background: var(--color-bg);
 }
 
 .sidebar {
@@ -3171,8 +3184,8 @@ body {
 
 .topbar {
   height: 64px;
-  padding: 0 32px;
-  background: #fff;
+  padding: 0 var(--page-padding);
+  background: var(--color-surface);
   border-color: #e4e7ec;
 }
 
@@ -3193,7 +3206,7 @@ body {
 
 .main-content {
   max-width: 1280px;
-  padding: 36px 32px 32px;
+  padding: 36px var(--page-padding) var(--space-4);
 }
 
 .page-heading {
@@ -3203,7 +3216,7 @@ body {
 .page-heading h1,
 .back-link + .page-heading h1 {
   font-family: inherit;
-  font-size: 28px;
+  font-size: var(--font-size-heading);
   font-weight: 650;
   line-height: 1.25;
   letter-spacing: -0.5px;

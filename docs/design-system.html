@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gamit Check Design System</title>
+    <style>
+      :root {
+        --primary: #256b4a;
+        --accent: #b42318;
+        --bg: #f6f7f8;
+        --surface: #ffffff;
+        --text: #1f2937;
+        --muted: #667085;
+        --line: #d0d5dd;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; background: #e7eaee; color: var(--text); font-family: Inter, "Segoe UI", Arial, sans-serif; }
+      body { padding: 32px; }
+      .board { width: 1376px; min-height: 1936px; margin: 0 auto; padding: 64px; background: var(--bg); }
+      header { display: flex; justify-content: space-between; align-items: end; padding-bottom: 28px; border-bottom: 2px solid var(--text); }
+      .kicker, .section-number, .token, .meta { font-size: 12px; line-height: 1.4; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+      h1 { margin: 8px 0 0; font-size: 44px; line-height: 1.1; letter-spacing: -.035em; }
+      header p { width: 440px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.55; }
+      section { margin-top: 36px; }
+      .section-title { display: flex; gap: 12px; align-items: baseline; margin-bottom: 16px; }
+      .section-number { color: var(--primary); }
+      h2 { margin: 0; font-size: 20px; }
+      .approach { display: grid; grid-template-columns: 190px 1fr 240px; align-items: center; gap: 20px; padding: 20px 24px; border: 1px solid var(--line); background: var(--surface); }
+      .approach strong { font-size: 18px; }
+      .approach p, .approach code { margin: 0; font-size: 14px; line-height: 1.5; }
+      code { font-family: "Cascadia Code", Consolas, monospace; }
+      .palette { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+      .swatch { overflow: hidden; border: 1px solid var(--line); background: var(--surface); }
+      .swatch-color { height: 118px; padding: 16px; display: flex; align-items: flex-end; font-size: 12px; font-weight: 700; }
+      .swatch-info { min-height: 88px; padding: 14px 16px; }
+      .swatch-info strong { display: block; margin-bottom: 5px; font-size: 14px; }
+      .swatch-info p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+      .primary { background: var(--primary); color: white; }
+      .accent { background: var(--accent); color: white; }
+      .background { background: var(--bg); color: var(--text); border-bottom: 1px solid var(--line); }
+      .surface { background: var(--surface); color: var(--text); border-bottom: 1px solid var(--line); }
+      .ink { background: var(--text); color: white; }
+      .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+      .panel { padding: 24px; border: 1px solid var(--line); background: var(--surface); }
+      .type-row { display: grid; grid-template-columns: 105px 1fr 105px; align-items: baseline; gap: 14px; padding: 16px 0; border-bottom: 1px solid #eaecf0; }
+      .type-row:last-child { border: 0; padding-bottom: 0; }
+      .type-row:first-child { padding-top: 0; }
+      .type-heading { font-size: 28px; font-weight: 700; }
+      .type-body { font-size: 14px; font-weight: 400; }
+      .type-small { font-size: 12px; font-weight: 400; }
+      .type-spec { text-align: right; color: var(--muted); font-size: 12px; }
+      .space-row { display: grid; grid-template-columns: 105px 1fr 72px; align-items: center; gap: 14px; margin-bottom: 18px; }
+      .space-row:last-child { margin-bottom: 0; }
+      .space-bar { height: 18px; background: var(--primary); }
+      .w8 { width: 32px; } .w16 { width: 64px; } .w32 { width: 128px; } .wpage { width: 192px; }
+      .space-value { color: var(--muted); font-size: 12px; text-align: right; }
+      .component-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+      .component { min-height: 190px; padding: 18px; border: 1px solid var(--line); background: var(--surface); }
+      .component-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 20px; }
+      .component-head strong { font-size: 13px; }
+      .component-head span { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+      .demo { min-height: 80px; display: flex; align-items: center; justify-content: center; }
+      .component p { margin: 14px 0 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
+      .buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+      .button { padding: 10px 14px; border: 1px solid transparent; border-radius: 6px; font: inherit; font-size: 12px; font-weight: 650; }
+      .button.primary-button { color: white; background: var(--primary); }
+      .button.secondary-button { color: #344054; background: white; border-color: #d0d5dd; }
+      .button.danger-button { color: white; background: var(--accent); }
+      .item-card { width: 100%; display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; }
+      .thumb { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 6px; background: #edf4f0; color: var(--primary); font-size: 20px; }
+      .item-card strong { display: block; font-size: 12px; }
+      .item-card small { color: var(--muted); font-size: 10px; }
+      .badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 12px; background: #edf4f0; color: #175c3d; font-size: 11px; font-weight: 650; }
+      .badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+      .field { width: 100%; }
+      .field label { display: block; margin-bottom: 6px; color: #344054; font-size: 11px; font-weight: 650; }
+      .field input { width: 100%; padding: 10px 11px; border: 1px solid #d0d5dd; border-radius: 6px; font: inherit; font-size: 12px; color: var(--text); }
+      .nav-demo { width: 100%; display: grid; gap: 6px; }
+      .nav-item { display: flex; gap: 8px; padding: 9px 10px; border-radius: 6px; color: #475467; font-size: 11px; }
+      .nav-item.active { background: #edf4f0; color: #175c3d; font-weight: 650; }
+      .heading-demo { width: 100%; }
+      .heading-demo small { color: var(--primary); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+      .heading-demo h3 { margin: 5px 0 3px; font-size: 20px; }
+      .heading-demo p { margin: 0; font-size: 11px; }
+      .toast { width: 100%; padding: 11px 12px; border: 1px solid #b7d6c6; border-radius: 7px; color: #175c3d; background: #f0f9f4; font-size: 11px; font-weight: 600; }
+      .dialog { width: 100%; padding: 14px; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 20px #10182818; }
+      .dialog strong { display: block; font-size: 12px; }
+      .dialog small { display: block; margin: 5px 0 12px; color: var(--muted); font-size: 10px; }
+      .dialog .buttons { justify-content: flex-end; }
+      .mini-form { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+      .mini-input { height: 28px; border: 1px solid #d0d5dd; border-radius: 5px; background: white; }
+      .mini-input.wide { grid-column: 1 / -1; height: 42px; }
+      .mini-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 6px; }
+      .footer-demo { width: 100%; display: flex; justify-content: space-between; padding: 12px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
+      .responsive { display: grid; grid-template-columns: 1fr 70px 1fr; gap: 20px; align-items: center; }
+      .viewport { padding: 20px; border: 1px solid var(--line); background: var(--surface); }
+      .viewport-title { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 12px; font-weight: 700; }
+      .screen { display: grid; grid-template-columns: 70px 1fr; min-height: 155px; border: 1px solid #98a2b3; }
+      .screen-nav { padding: 10px 7px; background: white; border-right: 1px solid var(--line); font-size: 9px; }
+      .screen-main { padding: 10px; }
+      .screen-head { height: 18px; margin-bottom: 8px; background: #eaecf0; }
+      .screen-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .screen-card { height: 48px; border: 1px solid var(--line); background: white; }
+      .phone { width: 148px; margin: 0 auto; display: block; min-height: 190px; }
+      .phone .screen-nav { display: none; }
+      .phone .screen-main { padding: 8px; }
+      .phone .screen-cards { grid-template-columns: 1fr; }
+      .phone .screen-card { height: 35px; }
+      .arrow { text-align: center; color: var(--primary); font-size: 26px; font-weight: 700; }
+      .rules { margin: 14px 0 0; padding-left: 18px; color: var(--muted); font-size: 12px; line-height: 1.65; }
+      .checks { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+      .check { min-height: 82px; padding: 14px; border: 1px solid var(--line); background: var(--surface); color: #344054; font-size: 11px; line-height: 1.45; }
+      .check strong { display: block; margin-bottom: 7px; color: var(--primary); font-size: 15px; }
+      footer { display: flex; justify-content: space-between; margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+      @media print { html, body { background: white; } body { padding: 0; } }
+    </style>
+  </head>
+  <body>
+    <main class="board">
+      <header>
+        <div>
+          <div class="kicker">Final project · Visual reference</div>
+          <h1>Gamit Check<br />Design System</h1>
+        </div>
+        <p>A compact set of interface decisions for the personal inventory application. Every token and component below comes from the approved screen map and wireframes.</p>
+      </header>
+
+      <section>
+        <div class="section-title"><span class="section-number">A</span><h2>Styling approach</h2></div>
+        <div class="approach"><strong>Plain CSS</strong><p>Semantic custom properties keep the React interface consistent without adding a UI framework.</p><code>src/styles.css<br />:root { ... }</code></div>
+      </section>
+
+      <section>
+        <div class="section-title"><span class="section-number">B</span><h2>Core colour tokens</h2></div>
+        <div class="palette">
+          <div class="swatch"><div class="swatch-color primary">#256B4A</div><div class="swatch-info"><strong>--color-primary</strong><p>Buttons, links, focus and active states<br />White text: 6.40:1</p></div></div>
+          <div class="swatch"><div class="swatch-color accent">#B42318</div><div class="swatch-info"><strong>--color-accent</strong><p>Destructive confirmation only<br />White text: 6.57:1</p></div></div>
+          <div class="swatch"><div class="swatch-color background">#F6F7F8</div><div class="swatch-info"><strong>--color-bg</strong><p>Application background<br />Text: 13.69:1</p></div></div>
+          <div class="swatch"><div class="swatch-color surface">#FFFFFF</div><div class="swatch-info"><strong>--color-surface</strong><p>Cards, forms and panels<br />Text: 14.68:1</p></div></div>
+          <div class="swatch"><div class="swatch-color ink">#1F2937</div><div class="swatch-info"><strong>--color-text</strong><p>Headings and body copy<br />On surface: 14.68:1</p></div></div>
+        </div>
+      </section>
+
+      <section class="two-column">
+        <div>
+          <div class="section-title"><span class="section-number">C</span><h2>Type scale</h2></div>
+          <div class="panel">
+            <div class="type-row"><span class="meta">Heading</span><span class="type-heading">Inventory</span><span class="type-spec">28 px / 700</span></div>
+            <div class="type-row"><span class="meta">Body</span><span class="type-body">Track what you own and where it is stored.</span><span class="type-spec">14 px / 400</span></div>
+            <div class="type-row"><span class="meta">Small</span><span class="type-small">Labels, captions and footer text</span><span class="type-spec">12 px / 400</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="section-title"><span class="section-number">D</span><h2>8 px spacing rule</h2></div>
+          <div class="panel">
+            <div class="space-row"><span class="token">--space-1</span><span class="space-bar w8"></span><span class="space-value">8 px · tight</span></div>
+            <div class="space-row"><span class="token">--space-2</span><span class="space-bar w16"></span><span class="space-value">16 px · groups</span></div>
+            <div class="space-row"><span class="token">--space-4</span><span class="space-bar w32"></span><span class="space-value">32 px · sections</span></div>
+            <div class="space-row"><span class="token">--page-padding</span><span class="space-bar wpage"></span><span class="space-value">32 / 18 px</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-title"><span class="section-number">E</span><h2>Reusable component set</h2></div>
+        <div class="component-grid">
+          <div class="component"><div class="component-head"><strong>Button</strong><span>Atom</span></div><div class="demo buttons"><button class="button primary-button">Add Item</button><button class="button secondary-button">Cancel</button><button class="button danger-button">Delete</button></div><p><code>variant</code>, <code>disabled</code>, <code>onClick</code>, <code>children</code></p></div>
+          <div class="component"><div class="component-head"><strong>ConditionBadge</strong><span>Atom</span></div><div class="demo"><span class="badge">Good</span></div><p><code>condition</code></p></div>
+          <div class="component"><div class="component-head"><strong>FormField</strong><span>Molecule</span></div><div class="demo"><div class="field"><label for="sample-name">Item name</label><input id="sample-name" value="Wireless headphones" readonly /></div></div><p><code>label</code>, <code>name</code>, <code>required</code>, <code>error</code>, <code>children</code></p></div>
+          <div class="component"><div class="component-head"><strong>ItemCard</strong><span>Molecule</span></div><div class="demo"><div class="item-card"><span class="thumb">□</span><span><strong>Item name</strong><small>Category · Location</small></span><span class="badge">Good</span></div></div><p><code>item</code>, <code>actions</code>, <code>onDelete</code></p></div>
+          <div class="component"><div class="component-head"><strong>PageHeading</strong><span>Molecule</span></div><div class="demo"><div class="heading-demo"><small>Inventory</small><h3>My Items</h3><p>Search and manage saved belongings.</p></div></div><p><code>eyebrow</code>, <code>title</code>, <code>description</code>, <code>action</code></p></div>
+          <div class="component"><div class="component-head"><strong>Sidebar / Nav</strong><span>Organism</span></div><div class="demo"><div class="nav-demo"><div class="nav-item active">▣ Dashboard</div><div class="nav-item">□ My Items</div><div class="nav-item">＋ Add Item</div></div></div><p><code>active</code>, <code>open</code>, <code>close</code>, <code>itemCount</code></p></div>
+          <div class="component"><div class="component-head"><strong>Toast</strong><span>Molecule</span></div><div class="demo"><div class="toast">✓ Item saved successfully</div></div><p><code>message</code>, <code>type</code>, <code>onDismiss</code></p></div>
+          <div class="component"><div class="component-head"><strong>DeleteDialog</strong><span>Organism</span></div><div class="demo"><div class="dialog"><strong>Delete this item?</strong><small>This action cannot be undone.</small><div class="buttons"><button class="button secondary-button">Keep</button><button class="button danger-button">Delete</button></div></div></div><p><code>item</code>, <code>close</code>, <code>confirm</code></p></div>
+          <div class="component"><div class="component-head"><strong>ItemForm</strong><span>Organism</span></div><div class="demo"><div class="mini-form"><div class="mini-input"></div><div class="mini-input"></div><div class="mini-input wide"></div><div class="mini-actions"><button class="button secondary-button">Cancel</button><button class="button primary-button">Save</button></div></div></div><p><code>item</code>, <code>showToast</code>, <code>onCreated</code>, <code>onUpdated</code></p></div>
+          <div class="component"><div class="component-head"><strong>Footer</strong><span>Organism</span></div><div class="demo"><div class="footer-demo"><span>Gamit Check</span><span>View screen flow →</span></div></div><p><code>flowLink</code>, <code>children</code></p></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-title"><span class="section-number">F</span><h2>Responsive plan</h2></div>
+        <div class="responsive">
+          <div class="viewport"><div class="viewport-title"><span>Desktop</span><span>761 px and above</span></div><div class="screen"><div class="screen-nav">Shared<br />navigation</div><div class="screen-main"><div class="screen-head"></div><div class="screen-cards"><div class="screen-card"></div><div class="screen-card"></div><div class="screen-card"></div></div></div></div><ul class="rules"><li>Persistent sidebar</li><li>Multi-column cards and paired form fields</li><li>32 px screen-edge padding</li></ul></div>
+          <div class="arrow">→</div>
+          <div class="viewport"><div class="viewport-title"><span>Phone</span><span>760 px and below</span></div><div class="screen phone"><div class="screen-main"><div class="screen-head"></div><div class="screen-cards"><div class="screen-card"></div><div class="screen-card"></div><div class="screen-card"></div></div></div></div><ul class="rules"><li>Navigation collapses into menu</li><li>Cards and form fields stack</li><li>18 px padding; no scroll at 375 px</li></ul></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-title"><span class="section-number">✓</span><h2>Accessibility check</h2></div>
+        <div class="checks">
+          <div class="check"><strong>✓</strong>All text/background pairs meet at least 4.5:1 contrast.</div>
+          <div class="check"><strong>✓</strong>Semantic header, nav, main, footer and button elements.</div>
+          <div class="check"><strong>✓</strong>Meaningful images have alt text; decorative art is hidden.</div>
+          <div class="check"><strong>✓</strong>Every form control has a matching visible label.</div>
+          <div class="check"><strong>✓</strong>Keyboard focus is visible and every action is reachable by Tab.</div>
+        </div>
+      </section>
+
+      <footer><span>Gamit Check · Personal inventory application</span><span>Design reference · 2026</span></footer>
+    </main>
+  </body>
+</html>
