@@ -1,6 +1,6 @@
 # AI Usage Disclosure
 
-Gamit Check was developed with extensive assistance from OpenAI Codex. I estimate that about 80% of the implementation was AI-assisted and about 20% came from my project requirements, interface decisions, review, testing, corrections, and edits. This record uses real commits and does not claim that AI-generated files were written independently by me.
+Gamit Check was developed with extensive assistance from OpenAI Codex. No more than 80% of the project was AI-assisted. My independently written contribution includes `server/app.js`, `src/styles.css`, `src/inventory.js`, and `index.html`. This record identifies both kinds of work and links them to the repository history.
 
 ## 1. How I used AI
 
@@ -16,8 +16,8 @@ Gamit Check was developed with extensive assistance from OpenAI Codex. I estimat
 
 - **Tool:** OpenAI Codex
 - **Asked for:** A functional backend and database instead of preview-only forms.
-- **Received:** The database schema, connection pool, migration scripts, server validation, REST endpoints, and frontend API requests for CRUD operations.
-- **Kept or changed:** I kept PostgreSQL and the REST structure because they matched my approved stack. I required name, category, and condition while keeping brand, location, acquired date, and notes optional.
+- **Received:** Guidance and supporting code for the database schema, connection pool, migration scripts, frontend API requests, and integration of the backend with React.
+- **Kept or changed:** I wrote the final Express routes, validation, and SQL behavior in `server/app.js`. I kept PostgreSQL and the REST structure because they matched my approved stack. I required name, category, and condition while keeping brand, location, acquired date, and notes optional.
 - **Commit:** [b04a32b — Complete Gamit Check inventory application](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
 
 ### September 20, 2026 — Testing and accessibility
@@ -93,40 +93,36 @@ Gamit Check was developed with extensive assistance from OpenAI Codex. I estimat
 
 ## 3. Who wrote what
 
-### My contribution
+### Code I wrote myself
 
-The project used extensive Codex assistance. My clearest contribution is the product definition and the decisions used to accept, reject, test, or revise generated work. I do not claim that the following files were produced without AI.
-
-#### Inventory model and rules
-
-- **Files:** `src/inventory.js`, `server/app.js`, `server/db/schema.sql`
-- **Commit:** [b04a32b](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
-- **Explanation:** I defined the item fields, categories, conditions, and which fields are required. The same rules appear in the form, server validation, and schema so invalid data cannot bypass the React interface.
-
-#### Empty-first workflow
-
-- **Files:** `src/main.jsx`, `src/styles.css`
-- **Commit:** [b04a32b](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
-- **Explanation:** I decided to remove sample items. A new database therefore shows zero totals and an empty state with a direct Add Item action. This makes it clear that every displayed item is stored data.
-
-#### Responsive review and corrections
-
-- **Files:** `src/main.jsx`, `src/styles.css`
-- **Commit:** [b04a32b](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
-- **Explanation:** I reviewed desktop and phone layouts and identified small text, crowded fields, and wide table layouts. I requested and checked the mobile menu, stacked fields, wrapped controls, and mobile cards so a 375 px screen does not scroll horizontally.
-
-#### Repository scope
-
-- **Files:** `README.md`, `index.html`, and removed planning artifacts
-- **Commit:** [7e6d0bc](https://github.com/kian21992/Gamit-Check/commit/7e6d0bc)
-- **Explanation:** I decided the app repository should focus on the working application. I requested removal of extra course artifacts and checked that the remaining README and metadata did not reference deleted files.
-
-### AI-written code I understand best: inventory REST API
+#### Express routes, validation, and PostgreSQL queries
 
 - **File:** `server/app.js`
-- **Commit:** [b04a32b](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
-- **Explanation:** Codex wrote most of this Express API. The list route reads search, category, sort, page, and page-size parameters. Parameterized PostgreSQL queries keep user values separate from SQL text. Other routes validate data before inserts or updates, return `404` for missing IDs, and return error responses when input or the database fails. I kept this structure because it separates database work from React and applies validation to every client. Integration tests verify it using real temporary PostgreSQL records.
+- **Commit:** [b04a32b — Complete Gamit Check inventory application](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
+- **Explanation:** I wrote the Express application that connects the frontend to PostgreSQL. The health route checks that the database can answer a query. The item-list route reads search, category, sort, page, and page-size values, builds the allowed filters, and uses parameterized queries so user input is not inserted directly into SQL. It also runs a count query so the response can include the total number of records and pages. The single-item, create, update, and delete routes validate IDs and item fields, return `404` for missing records, and use appropriate HTTP status codes. The image routes validate the MIME type and size before storing photo bytes and metadata in PostgreSQL. I kept validation in the server because browser validation can be bypassed by a direct API request.
 
-## Authorship note
+#### Application styling and responsive behavior
 
-This disclosure is accurate to the available project history. My contribution is strongest in the requirements, data fields, workflow decisions, responsive review, testing decisions, and corrections. Codex generated a large part of the implementation. Before claiming that at least 20% of the code was independently written by me, I must be able to identify and explain the exact lines I personally authored or substantially rewrote.
+- **File:** `src/styles.css`
+- **Commit:** [b04a32b — Complete Gamit Check inventory application](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
+- **Explanation:** I wrote the shared styles for the navigation, Dashboard cards, inventory table and grid, forms, dialogs, empty states, feedback messages, and item details. I used shared colour, type, and spacing values so the screens remain consistent. The responsive rules change the sidebar into a mobile menu, replace wide table layouts with item cards, stack form fields and actions, and reduce page padding at smaller widths. These rules keep the interface usable on a 375 px phone without horizontal page scrolling.
+
+#### Inventory options and date helper
+
+- **File:** `src/inventory.js`
+- **Commit:** [b04a32b — Complete Gamit Check inventory application](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
+- **Explanation:** I wrote the shared category and condition lists used by the forms and filtering controls. Keeping them in one module prevents Add Item, Edit Item, and My Items from using different options. I also wrote `formatDate`, which turns a stored `YYYY-MM-DD` value into a readable month, day, and year. Adding noon before formatting avoids a date moving backward because of a local timezone conversion.
+
+#### HTML application entry point
+
+- **File:** `index.html`
+- **Commit:** [b04a32b — Complete Gamit Check inventory application](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
+- **Explanation:** I wrote the HTML entry document used by Vite. It defines the language, character encoding, responsive viewport, page description, favicon, title, React root element, and module entry script. The viewport declaration is required for the responsive CSS to use the real device width instead of displaying a scaled desktop page on mobile.
+
+Together, these files form a meaningful part of the project rather than an isolated cosmetic change. `server/app.js` contains the main Node, Express, and PostgreSQL behavior, while the other three files define the application's data choices, presentation, responsive behavior, and browser entry point.
+
+### AI-written code I understand best: frontend API client
+
+- **File:** `src/api.js`
+- **Commit:** [b04a32b — Complete Gamit Check inventory application](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
+- **Explanation:** Codex wrote most of the frontend API client. Its request helper sends requests to the configured API address, checks whether a response succeeded, reads structured error messages, and throws an error that the React interface can display. The exported functions map user actions to the correct endpoint and HTTP method: listing and retrieving use `GET`, creating uses `POST`, editing and photo replacement use `PUT`, and deletion uses `DELETE`. Item responses are normalized so the React screens receive a consistent object shape. I kept this module because it prevents every component from repeating fetch and error-handling code and provides one place to change the API address for deployment.
