@@ -1,5 +1,9 @@
 ﻿# Gamit Check
 
+[![Made with AI assistance](https://img.shields.io/badge/Made_with-AI_assistance-blue)](AI-USAGE.md)
+
+Built with extensive assistance from OpenAI Codex (approximately 80% AI-assisted and 20% student-directed, reviewed, or edited). See the complete [AI usage disclosure](AI-USAGE.md).
+
 ## 1. Overview
 
 Gamit Check is a complete personal inventory web application for people who want to remember what they own, where they keep it, and its condition. React provides the interface, Express provides the API, and PostgreSQL stores item records and optional photos. The application includes persistent CRUD, server-side inventory queries, accessible error recovery, automated multi-browser tests, and a container-ready production build.
