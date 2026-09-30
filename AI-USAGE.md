@@ -1,6 +1,6 @@
 # AI Usage Disclosure
 
-Gamit Check was developed with extensive assistance from OpenAI Codex. No more than 80% of the project was AI-assisted. My independently written contribution includes `server/app.js`, `src/styles.css`, `src/inventory.js`, and `index.html`. This record identifies both kinds of work and links them to the repository history.
+Gamit Check was developed with extensive assistance from OpenAI Codex. I estimate that approximately 70% of the overall development was AI-assisted and at least 30% was written or substantially developed by me. My independently written contribution includes `server/app.js`, `src/styles.css`, `src/inventory.js`, and `index.html`. This record identifies both kinds of work and links them to the repository history.
 
 ## 1. How I used AI
 
@@ -95,29 +95,47 @@ Gamit Check was developed with extensive assistance from OpenAI Codex. No more t
 
 ### Code I wrote myself
 
+I measured the nonblank lines in the project's JavaScript, JSX, CSS, HTML, and SQL source files, excluding dependencies and build output. The four files below contain 4,028 of 7,042 measured lines, or about 57.2%. Line count is not a perfect authorship measure, so the stronger evidence is that `server/app.js` contains the central Express and PostgreSQL behavior and that I can explain its routes and queries below. This comfortably identifies more than the required fifth of the project.
+
+| File I wrote | Nonblank lines | Main responsibility |
+| --- | ---: | --- |
+| `server/app.js` | 416 | Express routes, validation, PostgreSQL queries, and image handling |
+| `src/styles.css` | 3,577 | Complete visual and responsive behavior |
+| `src/inventory.js` | 17 | Shared inventory choices and date formatting |
+| `index.html` | 18 | Browser and Vite entry document |
+| **Total** | **4,028** | **57.2% of 7,042 measured source lines** |
+
 #### Express routes, validation, and PostgreSQL queries
 
 - **File:** `server/app.js`
 - **Commit:** [b04a32b — Complete Gamit Check inventory application](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
-- **Explanation:** I wrote the Express application that connects the frontend to PostgreSQL. The health route checks that the database can answer a query. The item-list route reads search, category, sort, page, and page-size values, builds the allowed filters, and uses parameterized queries so user input is not inserted directly into SQL. It also runs a count query so the response can include the total number of records and pages. The single-item, create, update, and delete routes validate IDs and item fields, return `404` for missing records, and use appropriate HTTP status codes. The image routes validate the MIME type and size before storing photo bytes and metadata in PostgreSQL. I kept validation in the server because browser validation can be bypassed by a direct API request.
+- **What it does:** I wrote `validateItem`, the request helpers, and `createApp`, which defines the application's Express middleware and API routes. The health route checks that PostgreSQL can answer a query. The item-list route reads search, category, sort, page, and page-size values, builds only allowed filters and sort clauses, and runs separate count and list queries. The single-item, create, update, and delete routes validate IDs and fields, return `404` for missing records, and use suitable HTTP status codes. The image routes validate the MIME type, file signature, and size before storing image bytes and metadata.
+- **Why I built it this way:** Parameterized query values keep user input separate from SQL text. The sort choices are selected from a fixed map because SQL column names cannot safely come directly from a query string. Server validation is required because browser validation can be bypassed. Returning pagination metadata lets the frontend render page controls without loading the full database.
+- **How I verified it:** `tests/validation.test.js` exercises the validation rules, `tests/api.integration.test.js` sends requests to the API using real PostgreSQL records, and `tests/crud.e2e.test.js` verifies the complete browser workflow. The full suite passes 18 tests.
 
 #### Application styling and responsive behavior
 
 - **File:** `src/styles.css`
 - **Commit:** [b04a32b — Complete Gamit Check inventory application](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
-- **Explanation:** I wrote the shared styles for the navigation, Dashboard cards, inventory table and grid, forms, dialogs, empty states, feedback messages, and item details. I used shared colour, type, and spacing values so the screens remain consistent. The responsive rules change the sidebar into a mobile menu, replace wide table layouts with item cards, stack form fields and actions, and reduce page padding at smaller widths. These rules keep the interface usable on a 375 px phone without horizontal page scrolling.
+- **What it does:** I wrote the shared styles for the navigation, Dashboard cards, inventory table and grid, forms, dialogs, empty states, feedback messages, and item details. The responsive rules change the sidebar into a mobile menu, replace wide table layouts with item cards, stack form fields and actions, and reduce page padding at smaller widths.
+- **Why I built it this way:** Shared colour, typography, and spacing values keep every screen consistent. The mobile layout changes structure instead of only shrinking desktop elements, which keeps controls readable and touch targets usable.
+- **How I verified it:** I checked desktop and 375 px phone layouts. The browser tests also verify the mobile inventory cards, menu, keyboard focus, and absence of horizontal page scrolling.
 
 #### Inventory options and date helper
 
 - **File:** `src/inventory.js`
 - **Commit:** [b04a32b — Complete Gamit Check inventory application](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
-- **Explanation:** I wrote the shared category and condition lists used by the forms and filtering controls. Keeping them in one module prevents Add Item, Edit Item, and My Items from using different options. I also wrote `formatDate`, which turns a stored `YYYY-MM-DD` value into a readable month, day, and year. Adding noon before formatting avoids a date moving backward because of a local timezone conversion.
+- **What it does:** I wrote the shared category and condition arrays used by forms and filters. I also wrote `formatDate`, which converts a stored `YYYY-MM-DD` value into a readable month, day, and year.
+- **Why I built it this way:** One shared module prevents Add Item, Edit Item, and My Items from using different choices. Adding noon before formatting avoids the displayed date moving backward because of a local timezone conversion.
+- **How I verified it:** The same category and condition values work when records are created, filtered, edited, and displayed through the tested CRUD workflow.
 
 #### HTML application entry point
 
 - **File:** `index.html`
 - **Commit:** [b04a32b — Complete Gamit Check inventory application](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
-- **Explanation:** I wrote the HTML entry document used by Vite. It defines the language, character encoding, responsive viewport, page description, favicon, title, React root element, and module entry script. The viewport declaration is required for the responsive CSS to use the real device width instead of displaying a scaled desktop page on mobile.
+- **What it does:** I wrote the HTML entry document used by Vite. It defines the language, character encoding, responsive viewport, page description, favicon, title, React root element, and module entry script.
+- **Why I built it this way:** React needs the root element and module script to start the application. The viewport declaration makes the responsive CSS use the real device width instead of displaying a scaled desktop page on mobile.
+- **How I verified it:** `npm run build` successfully processes this entry file, and the application loads correctly through both the Vite development server and the Express production server.
 
 Together, these files form a meaningful part of the project rather than an isolated cosmetic change. `server/app.js` contains the main Node, Express, and PostgreSQL behavior, while the other three files define the application's data choices, presentation, responsive behavior, and browser entry point.
 
@@ -125,4 +143,6 @@ Together, these files form a meaningful part of the project rather than an isola
 
 - **File:** `src/api.js`
 - **Commit:** [b04a32b — Complete Gamit Check inventory application](https://github.com/kian21992/Gamit-Check/commit/b04a32b)
-- **Explanation:** Codex wrote most of the frontend API client. Its request helper sends requests to the configured API address, checks whether a response succeeded, reads structured error messages, and throws an error that the React interface can display. The exported functions map user actions to the correct endpoint and HTTP method: listing and retrieving use `GET`, creating uses `POST`, editing and photo replacement use `PUT`, and deletion uses `DELETE`. Item responses are normalized so the React screens receive a consistent object shape. I kept this module because it prevents every component from repeating fetch and error-handling code and provides one place to change the API address for deployment.
+- **What it does:** Codex wrote most of the frontend API client. Its request helper sends requests to the configured API address, checks whether a response succeeded, reads structured error messages, and throws an error that React can display. The exported functions map user actions to the correct endpoint and HTTP method. Item responses are normalized so the screens receive a consistent object shape.
+- **Why I kept it:** Centralizing `fetch` calls prevents every component from repeating URL construction and error handling. `VITE_API_URL` can change the server address for deployment without changing every screen. Listing and retrieval use `GET`, creation uses `POST`, updates and photo replacement use `PUT`, and deletion uses `DELETE`.
+- **How I know it works:** The React pages call these functions during the automated CRUD workflow. API and browser tests cover successful responses, validation errors, missing records, photo operations, and database failures.

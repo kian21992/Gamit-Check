@@ -2,7 +2,7 @@
 
 [![Made with AI assistance](https://img.shields.io/badge/Made_with-AI_assistance-blue)](AI-USAGE.md)
 
-Built with OpenAI Codex assistance. No more than 80% was AI-assisted; the independently written portion and exact file responsibilities are documented in the [AI usage disclosure](AI-USAGE.md).
+Built with OpenAI Codex assistance (approximately 70% AI-assisted and at least 30% independently written or substantially developed). See the evidence and exact file responsibilities in the [AI usage disclosure](AI-USAGE.md).
 
 ## 1. Overview
 
