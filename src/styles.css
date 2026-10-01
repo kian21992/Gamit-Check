@@ -563,7 +563,7 @@ main:focus {
   padding: 3px 7px;
   border-radius: 4px;
   background: #edf0e8;
-  color: #8d987e;
+  color: #56644f;
 }
 .text-link {
   display: inline-flex;
@@ -723,19 +723,19 @@ main:focus {
 }
 .condition-good {
   background: #edf4e8;
-  color: #739261;
+  color: #3f6b32;
 }
 .condition-new {
   background: #eef1fa;
-  color: #8593b7;
+  color: #50628c;
 }
 .condition-fair {
   background: #fcf2df;
-  color: #b09555;
+  color: #735719;
 }
 .condition-damaged {
   background: #f9e9e3;
-  color: #b87563;
+  color: #8f4030;
 }
 .categories-section {
   margin-top: 34px;
@@ -743,7 +743,7 @@ main:focus {
 .section-kicker {
   font-size: 10px;
   letter-spacing: 1.3px;
-  color: #9ba590;
+  color: #5f6b58;
 }
 .category-grid {
   display: grid;
@@ -3026,13 +3026,13 @@ tbody tr:hover {
   color: #859078;
 }
 .item-card-category {
-  color: #839175;
+  color: #586650;
 }
 .item-card-meta > span:first-child {
-  color: #849277;
+  color: #586650;
 }
 .category-tile > span:not(.category-icon) {
-  color: #889778;
+  color: #59684f;
 }
 .field input,
 .field select,

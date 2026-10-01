@@ -9,10 +9,21 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
+const configuredPoolMax = Number(
+  process.env.DATABASE_POOL_MAX ?? (process.env.VERCEL ? 1 : 10),
+);
+
+if (!Number.isInteger(configuredPoolMax) || configuredPoolMax < 1) {
+  throw new Error("DATABASE_POOL_MAX must be a positive integer.");
+}
+
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl:
     process.env.DATABASE_SSL === "true" ? { rejectUnauthorized: false } : false,
+  max: configuredPoolMax,
+  connectionTimeoutMillis: 10_000,
+  idleTimeoutMillis: 30_000,
 });
 
 pool.on("error", (error) => {

@@ -26,6 +26,7 @@ Deploy the `Dockerfile` to a container host and attach a PostgreSQL database. Co
 | `NODE_ENV`      | `production`                                                    |
 | `PORT`          | The port assigned by the host, usually provided automatically   |
 | `DATABASE_URL`  | The private PostgreSQL connection string supplied by the host   |
+| `DATABASE_POOL_MAX` | `1` for Vercel or another serverless host; otherwise host-specific |
 | `DATABASE_SSL`  | `true` when the hosted database requires TLS; otherwise `false` |
 | `CLIENT_ORIGIN` | Optional when the UI and API use the same domain                |
 

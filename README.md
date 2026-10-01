@@ -59,6 +59,7 @@ Copy `.env.example` to `.env`, then configure these values:
 | --------------- | --------------------------------------------------------------------- | ------------------------------------------------ |
 | `PORT`          | `3000`                                                                | Express API port                                 |
 | `DATABASE_URL`  | `postgresql://postgres:gamit_check_local@localhost:54329/gamit_check` | PostgreSQL connection string                     |
+| `DATABASE_POOL_MAX` | `10` locally / `1` on Vercel                                     | Maximum PostgreSQL connections per process       |
 | `CLIENT_ORIGIN` | `http://localhost:5173`                                               | Frontend origin allowed by CORS                  |
 | `DATABASE_SSL`  | `false`                                                               | Use `true` for hosted databases that require SSL |
 | `VITE_API_URL`  | Empty locally                                                         | Optional deployed API URL                        |
@@ -75,7 +76,7 @@ npm run db:local
 
 The first run initializes `.postgres-data/`, creates `gamit_check`, and applies `server/db/schema.sql`. Keep this terminal open while developing. The data persists between runs and is ignored by Git.
 
-To use an external PostgreSQL server instead, change `DATABASE_URL`, create the database, and run `npm run db:migrate`. There is no seed command because the inventory starts empty.
+To use Supabase, copy its **Transaction pooler** connection string into `DATABASE_URL`, set `DATABASE_SSL=true` and `DATABASE_POOL_MAX=1`, then run `npm run db:migrate`. Keep the connection string only in `.env` locally and in the deployment host's environment-variable settings. There is no seed command because the inventory starts empty.
 
 ## 3. How to run it
 
