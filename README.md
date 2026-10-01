@@ -6,7 +6,7 @@ Built with OpenAI Codex assistance (approximately 70% AI-assisted and at least 3
 
 ## 1. Overview
 
-Gamit Check is a complete personal inventory web application for people who want to remember what they own, where they keep it, and its condition. React provides the interface, Express provides the API, and a Supabase-hosted PostgreSQL database stores item records and optional photos. The application includes persistent CRUD, server-side inventory queries, accessible error recovery, automated multi-browser tests, and a container-ready production build.
+Gamit Check is a complete personal inventory web application for people who want to remember what they own, where they keep it, and its condition. React provides the interface, Express provides the API, and a Supabase-hosted PostgreSQL database stores item records and optional photos. The application includes persistent CRUD, server-side inventory queries, accessible error recovery, automated multi-browser tests, and a production build prepared for public hosting.
 
 **Repository:** [github.com/kian21992/Gamit-Check](https://github.com/kian21992/Gamit-Check)
 
@@ -186,9 +186,7 @@ tests/
   validation.test.js       Item validation unit tests
   api.integration.test.js  Real PostgreSQL API integration tests
   crud.e2e.test.js         Desktop/mobile browser workflow tests
-Dockerfile                 Production Node.js container
-compose.yaml               App and PostgreSQL container stack
-DEPLOYMENT.md              Production and container deployment guide
+DEPLOYMENT.md              Supabase and Vercel deployment guide
 index.html          Application entry page
 vite.config.js      Vite and React plugin configuration
 package.json        Dependencies and dev/build/preview commands
@@ -207,4 +205,4 @@ README.md           Setup, usage, and current status
 
 ## Production deployment
 
-The Express production server serves both the built React interface and `/api`. Supabase provides the hosted PostgreSQL database. `Dockerfile` and `compose.yaml` remain available for a container deployment, while Vercel requires its own Express entry and routing configuration. Follow [DEPLOYMENT.md](DEPLOYMENT.md) for environment variables, health checks, and release verification.
+Supabase provides the hosted PostgreSQL database. Vercel is the selected host for the React interface and Express API. Follow [DEPLOYMENT.md](DEPLOYMENT.md) for environment variables, remaining Vercel configuration, health checks, and release verification.

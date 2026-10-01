@@ -1,49 +1,53 @@
 # Gamit Check deployment
 
-The production build runs the React application and Express API from one Node.js container. PostgreSQL remains a separate persistent service.
+Gamit Check uses Supabase for hosted PostgreSQL and Vercel as the target host for the React interface and Express API. Item photos are stored in PostgreSQL and limited to 3 MB each.
 
-Item photos are stored in PostgreSQL with a 3 MB limit per image. Include database storage growth when choosing the managed PostgreSQL plan and backup schedule.
+## Current status
 
-## Local production container
+- The Supabase Transaction pooler is configured locally.
+- `server/db/schema.sql` has been applied successfully.
+- All seven API integration tests pass against Supabase.
+- The React and Express application still needs to be imported and configured in Vercel.
 
-1. Install Docker Desktop.
-2. Copy `.env.docker.example` to `.env.docker` and replace the database password placeholder.
-3. Build and start both services:
+## Supabase
 
-   ```sh
-   docker compose --env-file .env.docker up --build
-   ```
+Use the **Transaction pooler** URI from the Supabase Connect dialog. It normally uses port `6543`. Configure these private values locally and in Vercel:
 
-4. Open `http://localhost:3000`. The app container waits for PostgreSQL, applies the schema, and then starts the production server.
-5. Stop the services with `docker compose --env-file .env.docker down`. Add `--volumes` only when you intentionally want to erase the container database.
+| Variable | Value |
+| --- | --- |
+| `DATABASE_URL` | Supabase Transaction pooler URI |
+| `DATABASE_POOL_MAX` | `1` |
+| `DATABASE_SSL` | `true` |
 
-## Container hosting
+Never commit the connection string. To create or update the database schema, run:
 
-Deploy the `Dockerfile` to a container host and attach a PostgreSQL database. Configure these environment variables:
+```sh
+npm run db:migrate
+```
 
-| Variable        | Production value                                                |
-| --------------- | --------------------------------------------------------------- |
-| `NODE_ENV`      | `production`                                                    |
-| `PORT`          | The port assigned by the host, usually provided automatically   |
-| `DATABASE_URL`  | The private PostgreSQL connection string supplied by the host   |
-| `DATABASE_POOL_MAX` | `1` for Vercel or another serverless host; otherwise host-specific |
-| `DATABASE_SSL`  | `true` when the hosted database requires TLS; otherwise `false` |
-| `CLIENT_ORIGIN` | Optional when the UI and API use the same domain                |
+## Vercel target configuration
 
-The container runs the schema migration before starting. Configure the platform health check to request `/api/health`. Use a persistent managed PostgreSQL service; do not store production data inside the application container.
+The Vercel project will need the following environment variables:
+
+| Variable | Production value |
+| --- | --- |
+| `NODE_ENV` | `production` |
+| `DATABASE_URL` | Supabase Transaction pooler URI |
+| `DATABASE_POOL_MAX` | `1` |
+| `DATABASE_SSL` | `true` |
+| `CLIENT_ORIGIN` | Final Vercel application origin |
+| `VITE_API_URL` | Empty when the UI and API share the same origin |
+
+Before importing the repository, add the Vercel Express entry and routing configuration, then verify it locally. Do not run the schema migration automatically for every serverless request.
 
 ## Release checks
 
-Before publishing a release, run:
+With the configured Supabase database reachable, run:
 
 ```sh
 npm ci
-npm run db:local
 npm test
 npm run build
-npm audit
 ```
 
-Run `npm run db:local` in its own terminal. The automated tests remove only the records they create.
-
-After deployment, verify the public root page, `/api/health`, Add Item, Edit Item, and Delete Item. Then add the public application URL to the README.
+The tests use unique temporary records and remove only the records they create. After deployment, verify the public root page, `/api/health`, create, view, edit, delete, search, filtering, pagination, and photo upload. Then add the public application URL to `README.md` and the private class workspace pointer.
