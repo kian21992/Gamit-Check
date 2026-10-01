@@ -186,7 +186,6 @@ tests/
   validation.test.js       Item validation unit tests
   api.integration.test.js  Real PostgreSQL API integration tests
   crud.e2e.test.js         Desktop/mobile browser workflow tests
-DEPLOYMENT.md              Supabase and Vercel deployment guide
 index.html          Application entry page
 vite.config.js      Vite and React plugin configuration
 package.json        Dependencies and dev/build/preview commands
@@ -205,4 +204,4 @@ README.md           Setup, usage, and current status
 
 ## Production deployment
 
-Supabase provides the hosted PostgreSQL database. Vercel is the selected host for the React interface and Express API. Follow [DEPLOYMENT.md](DEPLOYMENT.md) for environment variables, remaining Vercel configuration, health checks, and release verification.
+Supabase provides the hosted PostgreSQL database. Vercel is the selected host for the React interface and Express API. Configure the private database variables in the Vercel dashboard, verify `/api/health`, and test every inventory workflow after deployment.
