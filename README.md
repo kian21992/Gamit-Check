@@ -6,7 +6,7 @@ Built with OpenAI Codex assistance (approximately 70% AI-assisted and at least 3
 
 ## 1. Overview
 
-Gamit Check is a complete personal inventory web application for people who want to remember what they own, where they keep it, and its condition. React provides the interface, Express provides the API, and PostgreSQL stores item records and optional photos. The application includes persistent CRUD, server-side inventory queries, accessible error recovery, automated multi-browser tests, and a container-ready production build.
+Gamit Check is a complete personal inventory web application for people who want to remember what they own, where they keep it, and its condition. React provides the interface, Express provides the API, and a Supabase-hosted PostgreSQL database stores item records and optional photos. The application includes persistent CRUD, server-side inventory queries, accessible error recovery, automated multi-browser tests, and a container-ready production build.
 
 **Repository:** [github.com/kian21992/Gamit-Check](https://github.com/kian21992/Gamit-Check)
 
@@ -55,32 +55,47 @@ The frontend uses React 19 and Vite 6. The backend uses Express 5 and the `pg` P
 
 Copy `.env.example` to `.env`, then configure these values:
 
-| Variable        | Example value                                                         | Purpose                                          |
-| --------------- | --------------------------------------------------------------------- | ------------------------------------------------ |
-| `PORT`          | `3000`                                                                | Express API port                                 |
-| `DATABASE_URL`  | `postgresql://postgres:gamit_check_local@localhost:54329/gamit_check` | PostgreSQL connection string                     |
-| `DATABASE_POOL_MAX` | `10` locally / `1` on Vercel                                     | Maximum PostgreSQL connections per process       |
-| `CLIENT_ORIGIN` | `http://localhost:5173`                                               | Frontend origin allowed by CORS                  |
-| `DATABASE_SSL`  | `false`                                                               | Use `true` for hosted databases that require SSL |
-| `VITE_API_URL`  | Empty locally                                                         | Optional deployed API URL                        |
+| Variable            | Example value                                                         | Purpose                                          |
+| ------------------- | --------------------------------------------------------------------- | ------------------------------------------------ |
+| `PORT`              | `3000`                                                                | Express API port                                 |
+| `DATABASE_URL`      | `postgresql://postgres:gamit_check_local@localhost:54329/gamit_check` | Private PostgreSQL connection string             |
+| `DATABASE_POOL_MAX` | `10` locally / `1` with the Supabase pooler                           | Maximum PostgreSQL connections per process       |
+| `CLIENT_ORIGIN`     | `http://localhost:5173`                                               | Frontend origin allowed by CORS                  |
+| `DATABASE_SSL`      | `false` locally / `true` with Supabase                                | Enable TLS for the hosted database               |
+| `VITE_API_URL`      | Empty locally                                                         | Optional deployed API URL                        |
 
 Never commit `.env`; it is ignored by Git. Vite proxies `/api` requests to `http://localhost:3000` during development.
 
-### Database setup and seeding
+### Supabase database setup
 
-For the included workspace-local PostgreSQL, open a terminal and run:
+The current application is verified against a Supabase-hosted PostgreSQL database. In Supabase, create a project and run `server/db/schema.sql` in the SQL Editor. Then copy the **Transaction pooler** URI into `DATABASE_URL` and use:
+
+```env
+DATABASE_POOL_MAX=1
+DATABASE_SSL=true
+```
+
+The pooler URI normally uses port `6543`. Keep it only in the ignored local `.env` file and in the deployment host's encrypted environment-variable settings. You can also apply or update the schema from the project root:
+
+```sh
+npm run db:migrate
+```
+
+There is no seed command because a new inventory intentionally starts empty.
+
+### Optional local database
+
+To work without Supabase, use the included workspace-local PostgreSQL. Open a terminal and run:
 
 ```sh
 npm run db:local
 ```
 
-The first run initializes `.postgres-data/`, creates `gamit_check`, and applies `server/db/schema.sql`. Keep this terminal open while developing. The data persists between runs and is ignored by Git.
-
-To use Supabase, copy its **Transaction pooler** connection string into `DATABASE_URL`, set `DATABASE_SSL=true` and `DATABASE_POOL_MAX=1`, then run `npm run db:migrate`. Keep the connection string only in `.env` locally and in the deployment host's environment-variable settings. There is no seed command because the inventory starts empty.
+The first run initializes `.postgres-data/`, creates `gamit_check`, and applies `server/db/schema.sql`. Keep this terminal open while developing. The data persists between runs and is ignored by Git. Use the local values from `.env.example`, including `DATABASE_POOL_MAX=10` and `DATABASE_SSL=false`.
 
 ## 3. How to run it
 
-With `npm run db:local` still running in the first terminal, start the React frontend and Express API in a second terminal:
+With Supabase configured in `.env`, start the React frontend and Express API:
 
 ```sh
 npm run dev
@@ -88,13 +103,15 @@ npm run dev
 
 Open **http://localhost:5173**. A working app displays **API connected**. A new database shows zero-valued cards and a **No items yet** panel. Press **Ctrl+C** to stop both processes.
 
+When using the optional local database, run `npm run db:local` in a separate terminal before `npm run dev`.
+
 To build the production version:
 
 ```sh
 npm run build
 ```
 
-The build creates `dist/`. With PostgreSQL still running, start the production server in PowerShell:
+The build creates `dist/`. With Supabase configured, start the production server in PowerShell:
 
 ```powershell
 $env:NODE_ENV="production"
@@ -105,13 +122,13 @@ Open **http://localhost:3000**. Express serves the built React application and A
 
 ### Run the automated tests
 
-Keep `npm run db:local` running, close any application data you do not want to edit manually, and run:
+Make sure the configured PostgreSQL database is reachable, then run:
 
 ```sh
 npm test
 ```
 
-The test command runs 18 validation, API, photo, accessibility, and Chromium/Firefox/WebKit browser tests. Tests create uniquely named records and remove only those records afterward. Individual commands are `npm run test:unit`, `npm run test:api`, and `npm run test:e2e`.
+The test command runs 18 validation, API, photo, accessibility, and Chromium/Firefox/WebKit browser tests. Tests create uniquely named records and remove only those records afterward. All seven API integration tests have also been run successfully against Supabase. Individual commands are `npm run test:unit`, `npm run test:api`, and `npm run test:e2e`.
 
 ## 4. Features and usage
 
@@ -183,11 +200,11 @@ README.md           Setup, usage, and current status
 
 ## 6. Known issues and next steps
 
-- **The database must be running:** keep `npm run db:local` open, or configure an external PostgreSQL server.
+- **Supabase is connected:** the hosted database schema, CRUD operations, queries, and photo storage have been verified. Its credentials remain private and are not committed.
 - **Automated accessibility has practical limits:** axe checks and keyboard skip navigation pass, but a manual screen-reader review is still recommended before a public release.
 - **Photos use database storage:** each image is limited to 3 MB to keep backups and hosted-database usage manageable.
-- **Public deployment URL pending:** the repository is published at [github.com/kian21992/Gamit-Check](https://github.com/kian21992/Gamit-Check). Deploy using [DEPLOYMENT.md](DEPLOYMENT.md), then record the public application URL.
+- **Application deployment pending:** Supabase is online, but the React and Express application still needs a public Vercel deployment URL. The repository is published at [github.com/kian21992/Gamit-Check](https://github.com/kian21992/Gamit-Check).
 
 ## Production deployment
 
-The Express production server serves both the built React interface and `/api`. `Dockerfile` builds the application, while `compose.yaml` runs it with PostgreSQL. Follow [DEPLOYMENT.md](DEPLOYMENT.md) for local containers, hosted environment variables, health checks, and release verification.
+The Express production server serves both the built React interface and `/api`. Supabase provides the hosted PostgreSQL database. `Dockerfile` and `compose.yaml` remain available for a container deployment, while Vercel requires its own Express entry and routing configuration. Follow [DEPLOYMENT.md](DEPLOYMENT.md) for environment variables, health checks, and release verification.
