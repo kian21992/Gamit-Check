@@ -220,8 +220,8 @@ README.md           Setup, usage, and current status
 - **Supabase is connected:** the hosted database schema, CRUD operations, queries, and photo storage have been verified. Its credentials remain private and are not committed.
 - **Automated accessibility has practical limits:** axe checks and keyboard skip navigation pass, but a manual screen-reader review is still recommended before a public release.
 - **Photos use database storage:** each image is limited to 3 MB to keep backups and hosted-database usage manageable.
-- **Deployment verification remains:** the React frontend is live at [gamitcheck.vercel.app](https://gamitcheck.vercel.app/). The repository now includes the Vercel Express function, but the production deployment must be rebuilt with the Supabase environment variables before the public inventory workflow can be confirmed.
+- **Deployment is live:** the React frontend, Express API, and Supabase database are connected at [gamitcheck.vercel.app](https://gamitcheck.vercel.app/). The public health check and inventory endpoint have been verified successfully.
 
 ## Production deployment
 
-Supabase provides the hosted PostgreSQL database, and Vercel hosts both the React interface and the Express API function. After adding the production environment variables and redeploying, verify `/api/health` and test every inventory workflow on the public URL.
+Supabase provides the hosted PostgreSQL database, and Vercel hosts both the React interface and the Express API function. The production environment variables are configured, and `/api/health` confirms that the deployed API can connect to the database.
