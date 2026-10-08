@@ -10,6 +10,10 @@ Gamit Check is a complete personal inventory web application for people who want
 
 **Repository:** [github.com/kian21992/Gamit-Check](https://github.com/kian21992/Gamit-Check)
 
+**Live application:** [gamitcheck.vercel.app](https://gamitcheck.vercel.app/)
+
+The React frontend is publicly deployed on Vercel. The Express API route is still being connected; until that is complete, the public site displays **API unavailable** while the local application remains fully functional with Supabase.
+
 ## 2. Setup and installation
 
 ### Prerequisites
@@ -94,6 +98,12 @@ npm run db:local
 The first run initializes `.postgres-data/`, creates `gamit_check`, and applies `server/db/schema.sql`. Keep this terminal open while developing. The data persists between runs and is ignored by Git. Use the local values from `.env.example`, including `DATABASE_POOL_MAX=10` and `DATABASE_SSL=false`.
 
 ## 3. How to run it
+
+### Public deployment
+
+Open [https://gamitcheck.vercel.app/](https://gamitcheck.vercel.app/). The Vercel frontend deployment is online. The public `/api` routing is still pending, so use the local instructions below for the complete inventory workflow.
+
+### Local development
 
 With Supabase configured in `.env`, start the React frontend and Express API:
 
@@ -200,8 +210,8 @@ README.md           Setup, usage, and current status
 - **Supabase is connected:** the hosted database schema, CRUD operations, queries, and photo storage have been verified. Its credentials remain private and are not committed.
 - **Automated accessibility has practical limits:** axe checks and keyboard skip navigation pass, but a manual screen-reader review is still recommended before a public release.
 - **Photos use database storage:** each image is limited to 3 MB to keep backups and hosted-database usage manageable.
-- **Application deployment pending:** Supabase is online, but the React and Express application still needs a public Vercel deployment URL. The repository is published at [github.com/kian21992/Gamit-Check](https://github.com/kian21992/Gamit-Check).
+- **Public API routing is pending:** the React frontend is live at [gamitcheck.vercel.app](https://gamitcheck.vercel.app/), but `/api/health` and `/api/items` currently return `404`. The Express API must be added to the Vercel deployment before the public inventory workflow is complete.
 
 ## Production deployment
 
-Supabase provides the hosted PostgreSQL database. Vercel is the selected host for the React interface and Express API. Configure the private database variables in the Vercel dashboard, verify `/api/health`, and test every inventory workflow after deployment.
+Supabase provides the hosted PostgreSQL database, and Vercel currently hosts the React interface. The remaining deployment task is routing `/api/*` to the Express application in Vercel. After that change, verify `/api/health` and test every inventory workflow on the public URL.
