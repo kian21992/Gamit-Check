@@ -101,7 +101,17 @@ The first run initializes `.postgres-data/`, creates `gamit_check`, and applies 
 
 ### Public deployment
 
-Open [https://gamitcheck.vercel.app/](https://gamitcheck.vercel.app/). The Vercel frontend deployment is online. The public `/api` routing is still pending, so use the local instructions below for the complete inventory workflow.
+Open [https://gamitcheck.vercel.app/](https://gamitcheck.vercel.app/). The Vercel frontend is online, and the repository includes the serverless API entry needed for the complete inventory workflow.
+
+The repository includes `api/[...path].js`, which exposes the existing Express application as a Vercel Function. In the Vercel project, add these environment variables for **Production**, then redeploy:
+
+| Variable | Value |
+| --- | --- |
+| `DATABASE_URL` | Supabase transaction-pooler connection string |
+| `DATABASE_SSL` | `true` |
+| `DATABASE_POOL_MAX` | `1` |
+
+Do not add the connection string to GitHub. After deployment, open `/api/health` and confirm it returns a successful database response.
 
 ### Local development
 
@@ -210,8 +220,8 @@ README.md           Setup, usage, and current status
 - **Supabase is connected:** the hosted database schema, CRUD operations, queries, and photo storage have been verified. Its credentials remain private and are not committed.
 - **Automated accessibility has practical limits:** axe checks and keyboard skip navigation pass, but a manual screen-reader review is still recommended before a public release.
 - **Photos use database storage:** each image is limited to 3 MB to keep backups and hosted-database usage manageable.
-- **Public API routing is pending:** the React frontend is live at [gamitcheck.vercel.app](https://gamitcheck.vercel.app/), but `/api/health` and `/api/items` currently return `404`. The Express API must be added to the Vercel deployment before the public inventory workflow is complete.
+- **Deployment verification remains:** the React frontend is live at [gamitcheck.vercel.app](https://gamitcheck.vercel.app/). The repository now includes the Vercel Express function, but the production deployment must be rebuilt with the Supabase environment variables before the public inventory workflow can be confirmed.
 
 ## Production deployment
 
-Supabase provides the hosted PostgreSQL database, and Vercel currently hosts the React interface. The remaining deployment task is routing `/api/*` to the Express application in Vercel. After that change, verify `/api/health` and test every inventory workflow on the public URL.
+Supabase provides the hosted PostgreSQL database, and Vercel hosts both the React interface and the Express API function. After adding the production environment variables and redeploying, verify `/api/health` and test every inventory workflow on the public URL.
