@@ -20,7 +20,9 @@ if (!Number.isInteger(configuredPoolMax) || configuredPoolMax < 1) {
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl:
-    process.env.DATABASE_SSL === "true" ? { rejectUnauthorized: false } : false,
+    process.env.DATABASE_SSL?.toLowerCase() === "true"
+      ? { rejectUnauthorized: false }
+      : false,
   max: configuredPoolMax,
   connectionTimeoutMillis: 10_000,
   idleTimeoutMillis: 30_000,
